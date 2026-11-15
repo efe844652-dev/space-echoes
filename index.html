@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050b18'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%23c1440e'/%3E%3Ccircle cx='26' cy='27' r='3' fill='%23e07b4c'/%3E%3Ccircle cx='38' cy='38' r='4' fill='%23e07b4c'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='9' fill='none' stroke='%234fc3f7' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images-api.nasa.gov">
+<link rel="preconnect" href="https://api.nasa.gov">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;600;700&display=swap">
 <title>SPACE ECHOES | Opportunity Dijital Miras &amp; AI Asistan</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;600;700&display=swap');
 
 :root{
   --bg:#050b18; --panel:#101d32; --panel-glass:rgba(16, 29, 50, 0.85);
@@ -120,7 +124,8 @@ body{margin:0;background:var(--bg);color:var(--white);font-family:'Public Sans',
 .cover{
   background-image:
     linear-gradient(90deg,rgba(5,11,24,.96),rgba(5,11,24,.45)),
-    url('https://images-assets.nasa.gov/image/PIA04413/PIA04413~orig.jpg');
+    url('https://images-assets.nasa.gov/image/PIA04413/PIA04413~orig.jpg'),
+    radial-gradient(circle at 70% 62%,#b84a27 0%,#4b1f14 38%,#050b18 78%);
 }
 .cover h1{
   font-family:Inter,sans-serif;font-size:clamp(46px,8.5vw,100px);line-height:.95;
@@ -242,7 +247,7 @@ body{margin:0;background:var(--bg);color:var(--white);font-family:'Public Sans',
 .main-button:hover{background:#fff}
 
 /* ANIMATIONS */
-.slide-inner>*{ opacity:0;transform:translateY(24px); transition:opacity .7s ease,transform .7s ease; }
+.slide-inner>*{ opacity:0;transform:translateY(24px); transition:opacity .4s ease,transform .4s ease; }
 .slide.in .slide-inner>*{opacity:1;transform:none}
 .slide.in .slide-inner>*:nth-child(2){transition-delay:.07s}
 .slide.in .slide-inner>*:nth-child(3){transition-delay:.14s}
@@ -532,7 +537,7 @@ footer a:hover{text-decoration:underline}
     <button type="button" class="hud-btn" onclick="toggleOverviewModal('tab-wp')" data-i18n="btn_whitepaper">📄 WHITEPAPER / DOCS</button>
     <select id="lang-select" onchange="changeLang(this.value)" aria-label="Dil Seçimi">
       <option value="tr">TR</option>
-      <option value="en">EN</option>
+      <option value="en" selected>EN</option>
       <option value="de">DE</option>
     </select>
   </div>
@@ -995,6 +1000,13 @@ footer a:hover{text-decoration:underline}
 </div>
 
 <script>
+function fetchT(url, ms){
+  ms = ms || 6000;
+  if(!window.AbortController) return fetch(url);
+  var ctl = new AbortController();
+  var t = setTimeout(function(){ ctl.abort(); }, ms);
+  return fetch(url, { signal: ctl.signal }).then(function(r){ clearTimeout(t); return r; }, function(e){ clearTimeout(t); throw e; });
+}
 var NASA_API_KEY = 'bjzLHNrMJRDRwGfgKbQhpGcRPjHcrRdMMppHcKrF';
 var NASA_IMAGES_BASE = 'https://images-api.nasa.gov';
 
@@ -1083,7 +1095,7 @@ var marsWeatherState = {
 };
 
 function loadMarsWeather() {
-  fetch('https://api.nasa.gov/insight_weather/?api_key=' + NASA_API_KEY + '&feedtype=json&ver=1.0')
+  fetchT('https://api.nasa.gov/insight_weather/?api_key=' + NASA_API_KEY + '&feedtype=json&ver=1.0')
     .then(function(res){ return res.ok ? res.json() : null; })
     .then(function(data){
       if (data && data.sol_keys && data.sol_keys.length > 0) {
@@ -1113,7 +1125,7 @@ function updateWeatherUI() {
   var navTemp = document.getElementById('nav-mars-temp');
   var aiBanner = document.getElementById('ai-weather-text');
   if (navTemp) navTemp.textContent = marsWeatherState.tempAvg + '°C · ' + marsWeatherState.wind + ' m/s';
-  if (aiBanner) aiBanner.textContent = marsWeatherState.tempAvg + '°C | Rüzgâr: ' + marsWeatherState.wind + ' m/s | ' + marsWeatherState.pressure + ' Pa';
+  if (aiBanner) aiBanner.textContent = marsWeatherState.tempAvg + '°C | ' + UI_X[currentLang].wind + ': ' + marsWeatherState.wind + ' m/s | ' + marsWeatherState.pressure + ' Pa';
 }
 
 function askAiFromWeather() {
@@ -1311,7 +1323,7 @@ var I18N = {
   }
 };
 
-var currentLang = 'tr';
+var currentLang = 'en';
 
 /* ---- 4. İNTERAKTİF ZAMAN ÇİZELGESİ VERİLERİ ---- */
 var TIMELINE_DATA = [
@@ -1366,6 +1378,14 @@ var TIMELINE_DATA = [
 ];
 
 var activeTimelineIdx = 0;
+var TL_LBL = {
+  en: [["JUL 7, 2003","LAUNCH · T-0"],["JAN 24, 2004","SOL 001 · LANDING"],["MAR 2004","SOL 038 · WATER PROOF"],["JAN 2005","SOL 346 · METEORITE"],["2006–2008","SOL 951–1630"],["AUG 2011","SOL 2681 · ENDEAVOUR"],["MAR 24, 2015","SOL 3968 · MARATHON"],["JUN 10, 2018","SOL 5111 · LAST SIGNAL"]],
+  de: [["7. JUL 2003","START · T-0"],["24. JAN 2004","SOL 001 · LANDUNG"],["MÄR 2004","SOL 038 · WASSERBEWEIS"],["JAN 2005","SOL 346 · METEORIT"],["2006–2008","SOL 951–1630"],["AUG 2011","SOL 2681 · ENDEAVOUR"],["24. MÄR 2015","SOL 3968 · MARATHON"],["10. JUN 2018","SOL 5111 · LETZTES SIGNAL"]]
+};
+function tlLbl(i, k){
+  if(TL_LBL[currentLang]) return TL_LBL[currentLang][i][k];
+  return k === 0 ? TIMELINE_DATA[i].year : TIMELINE_DATA[i].sol;
+}
 
 function renderTimeline() {
   var track = document.getElementById('timeline-track');
@@ -1378,8 +1398,8 @@ function renderTimeline() {
     node.type = 'button';
     node.className = 'tl-node' + (idx === activeTimelineIdx ? ' active' : '');
     node.innerHTML =
-      '<span class="tl-year">' + item.year + '</span>' +
-      '<span class="tl-sol">' + item.sol + '</span>' +
+      '<span class="tl-year">' + tlLbl(idx,0) + '</span>' +
+      '<span class="tl-sol">' + tlLbl(idx,1) + '</span>' +
       '<span class="tl-label">' + item[currentLang].t + '</span>';
     node.onclick = function(){
       activeTimelineIdx = idx;
@@ -1392,7 +1412,7 @@ function renderTimeline() {
   var info = cur[currentLang];
   box.innerHTML =
     '<div>' +
-      '<h3>' + cur.year + ' — ' + info.t + '</h3>' +
+      '<h3>' + tlLbl(activeTimelineIdx,0) + ' — ' + info.t + '</h3>' +
       '<p>' + info.d + '</p>' +
       '<span class="tl-meta">🛰️ ' + info.m + '</span>' +
     '</div>' +
@@ -1408,7 +1428,7 @@ function startPostcardCamera() {
   var canvas = document.getElementById('pc-canvas');
   var snapBtn = document.getElementById('pc-snap-btn');
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    alert('Tarayıcınız kamera erişimini desteklemiyor. Lütfen fotoğraf yükleyin.');
+    alert(UI_X[currentLang].cam_unsup);
     return;
   }
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
@@ -1420,7 +1440,7 @@ function startPostcardCamera() {
       snapBtn.style.display = 'inline-flex';
     })
     .catch(function(){
-      alert('Kamera izni alınamadı. Cihazınızdan fotoğraf yükleyebilirsiniz.');
+      alert(UI_X[currentLang].cam_denied);
     });
 }
 
@@ -1525,15 +1545,16 @@ function renderPostcardCanvas() {
     ctx.fillStyle = '#9aabc2';
     ctx.font = '600 16px "DM Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('ASTRONOT PORTRE ALANI', 216, 235);
+    ctx.fillText(UI_X[currentLang].pc_portrait, 216, 235);
     ctx.font = '13px "DM Mono", monospace';
-    ctx.fillText('(Kamera aç veya fotoğraf yükle)', 216, 265);
+    ctx.fillText(UI_X[currentLang].pc_portrait_hint, 216, 265);
   }
   ctx.restore();
 
   // Sağ taraf tipografi ve telemetri damgası
-  var userName = (document.getElementById('pc-name').value || 'KAŞİF / EXPLORER').toUpperCase();
-  var userMsg = document.getElementById('pc-msg').value || "Meridiani Planum'dan Dünya'ya selamlar!";
+  var X = UI_X[currentLang];
+  var userName = (document.getElementById('pc-name').value || X.pc_def_name).toUpperCase();
+  var userMsg = document.getElementById('pc-msg').value || X.pc_def_msg;
 
   ctx.textAlign = 'left';
   ctx.fillStyle = '#4fc3f7';
@@ -1542,13 +1563,13 @@ function renderPostcardCanvas() {
 
   ctx.fillStyle = '#ffbd73';
   ctx.font = '800 44px Inter, sans-serif';
-  ctx.fillText("MARS'TAN", 420, 145);
+  ctx.fillText(X.pc_t1, 420, 145);
   ctx.fillStyle = '#ffffff';
-  ctx.fillText('SELAMLAR!', 420, 196);
+  ctx.fillText(X.pc_t2, 420, 196);
 
   ctx.fillStyle = '#4fc3f7';
   ctx.font = '700 18px "DM Mono", monospace';
-  ctx.fillText('GÖNDEREN: ' + userName.slice(0, 26), 420, 252);
+  ctx.fillText(X.pc_from + userName.slice(0, 26), 420, 252);
 
   ctx.fillStyle = '#e5eefb';
   ctx.font = '17px "Public Sans", sans-serif';
@@ -1575,9 +1596,9 @@ function renderPostcardCanvas() {
 
   ctx.fillStyle = '#ffbd73';
   ctx.font = '700 13px "DM Mono", monospace';
-  ctx.fillText('KONUM: MERIDIANI PLANUM (1.95°S, 354.47°E) · EAGLE KRATERİ', 66, 496);
+  ctx.fillText(X.pc_loc, 66, 496);
   ctx.fillStyle = '#4fc3f7';
-  ctx.fillText('MARS HAVA DURUMU: ' + marsWeatherState.tempAvg + '°C | RÜZGAR: ' + marsWeatherState.wind + ' m/s | BASINÇ: ' + marsWeatherState.pressure + ' Pa', 66, 526);
+  ctx.fillText(X.pc_wx + ': ' + marsWeatherState.tempAvg + '°C | ' + X.wind + ': ' + marsWeatherState.wind + ' m/s | ' + X.pres + ': ' + marsWeatherState.pressure + ' Pa', 66, 526);
 }
 
 function downloadPostcard() {
@@ -1839,6 +1860,268 @@ function handleAiSubmit(e) {
   askAi(val);
 }
 
+
+
+/* ---- ÇEVRİMDIŞI YEDEK: PROSEDÜREL MARS SAHNELERİ ---- */
+var offlineRover = false, offlineNasa = false;
+var SCENE_PAL = [["#1a0f2e","#7a2e17"],["#0b1d3a","#b84a27"],["#2a1220","#d9803f"],["#08142b","#8a3a1f"],["#140c24","#c1583a"],["#0d2036","#a8482a"],["#1b0f1f","#e0925a"],["#07101f","#9b3d22"]];
+function sceneUri(seed, W, H, withRover){
+  var st = seed * 9301 + 49297;
+  function rnd(){ st = (st * 9301 + 49297) % 233280; return st / 233280; }
+  var pal = SCENE_PAL[seed % SCENE_PAL.length];
+  var o = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice">';
+  o += '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + pal[0] + '"/><stop offset=".72" stop-color="' + pal[1] + '"/></linearGradient></defs>';
+  o += '<rect width="' + W + '" height="' + H + '" fill="url(#g)"/>';
+  for(var i = 0; i < 40; i++){
+    o += '<circle cx="' + Math.round(rnd() * W) + '" cy="' + Math.round(rnd() * H * 0.5) + '" r="' + (0.6 + rnd() * 1.4).toFixed(1) + '" fill="#ffffff" opacity="' + (0.25 + rnd() * 0.6).toFixed(2) + '"/>';
+  }
+  o += '<circle cx="' + Math.round(W * (0.15 + rnd() * 0.6)) + '" cy="' + Math.round(H * (0.2 + rnd() * 0.2)) + '" r="' + Math.round(H * 0.045) + '" fill="#ffe2b8" opacity=".85"/>';
+  var cols = ["#8a3a1f","#6e2b16","#4b1f14"], ys = [0.62, 0.72, 0.84];
+  for(var d = 0; d < 3; d++){
+    var y0 = H * ys[d], d1 = (rnd() - 0.5) * H * 0.10, d2 = (rnd() - 0.5) * H * 0.10;
+    o += '<path d="M0 ' + H + ' L0 ' + Math.round(y0) + ' Q' + Math.round(W * 0.25) + ' ' + Math.round(y0 + d1) + ' ' + Math.round(W * 0.5) + ' ' + Math.round(y0) + ' T' + W + ' ' + Math.round(y0 + d2) + ' L' + W + ' ' + H + ' Z" fill="' + cols[d] + '"/>';
+  }
+  o += '<ellipse cx="' + Math.round(W * (0.25 + rnd() * 0.3)) + '" cy="' + Math.round(H * 0.7) + '" rx="' + Math.round(W * 0.12) + '" ry="' + Math.round(H * 0.025) + '" fill="none" stroke="#2e120a" stroke-width="3" opacity=".6"/>';
+  if(withRover){
+    var sc = (H / 900).toFixed(2), rx = Math.round(W * 0.62), ry = Math.round(H * 0.79);
+    o += '<g transform="translate(' + rx + ' ' + ry + ') scale(' + sc + ')">';
+    o += '<rect x="-10" y="-12" width="140" height="10" fill="#26456e"/><rect x="0" y="0" width="120" height="36" rx="4" fill="#cfd6df"/>';
+    o += '<rect x="96" y="-44" width="5" height="32" fill="#9aabc2"/><rect x="90" y="-56" width="20" height="12" fill="#4fc3f7"/>';
+    [14, 60, 106].forEach(function(cx){ o += '<circle cx="' + cx + '" cy="44" r="13" fill="#20242b" stroke="#9aabc2" stroke-width="2"/>'; });
+    o += '</g>';
+  }
+  o += '</svg>';
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(o);
+}
+var OFFLINE_FRAMES = {
+  tr: ["Eagle Krateri panoraması","Endurance Krateri","Victoria Krateri kenarı","Endeavour Krateri","Heat Shield Rock göktaşı","Hematit küreleri (Blueberries)","Perseverance Vadisi","Pancam 360° panorama"],
+  en: ["Eagle Crater panorama","Endurance Crater","Victoria Crater rim","Endeavour Crater","Heat Shield Rock meteorite","Hematite spheres (Blueberries)","Perseverance Valley","Pancam 360° panorama"],
+  de: ["Eagle-Krater Panorama","Endurance-Krater","Victoria-Kraterrand","Endeavour-Krater","Meteorit Heat Shield Rock","Hämatitkugeln (Blueberries)","Perseverance Valley","Pancam-360°-Panorama"]
+};
+function renderOfflineGallery(id, entries, seedBase){
+  var g = document.getElementById(id);
+  if(!g) return;
+  g.innerHTML = '<p class="loading">' + UI_X[currentLang].offline_note + '</p>';
+  entries.forEach(function(e, i){
+    var uri = sceneUri(seedBase + i, 900, 900, i % 2 === 0);
+    var fig = document.createElement('figure');
+    var img = document.createElement('img');
+    img.src = uri; img.alt = e.cap;
+    var cap = document.createElement('figcaption');
+    cap.textContent = e.cap;
+    fig.onclick = function(){ openLightbox(uri, e.cap); };
+    fig.appendChild(img); fig.appendChild(cap);
+    g.appendChild(fig);
+  });
+}
+function renderOfflineRover(){
+  var entries = TIMELINE_DATA.map(function(it, i){ return { cap: tlLbl(i, 1) + ' · ' + it[currentLang].t }; });
+  renderOfflineGallery('rover-gallery', entries, 20);
+}
+function renderOfflineNasa(){
+  var entries = OFFLINE_FRAMES[currentLang].map(function(t){ return { cap: t }; });
+  renderOfflineGallery('nasa-gallery', entries, 40);
+}
+
+/* ---- EK ÇEVİRİLER (kartpostal, modal, hava durumu, slayt başlıkları) ---- */
+var TAB_TR = {};
+['tab-wp','tab-ov','tab-api','tab-jury'].forEach(function(id){ var el = document.getElementById(id); if(el) TAB_TR[id] = el.innerHTML; });
+var UI_X = {
+  tr: {
+    wind: "Rüzgâr", pres: "BASINÇ", offline_note: "NASA sunucularına ulaşılamıyor — çevrimdışı arşiv illüstrasyonları gösteriliyor.", pc_wx: "MARS HAVA DURUMU",
+    ai_tel: "🛰️ MARS TELEMETRİ:", pill_title: "NASA Mars Hava Durumu Telemetrisi", lang_aria: "Dil Seçimi",
+    pc_name_ph: "Kaşif Adı (Örn: Astronot Ali)", pc_msg_ph: "Kartpostal Mesajı (Örn: Meridiani Planum'dan sevgiler!)",
+    pc_def_name: "KAŞİF / EXPLORER", pc_def_msg: "Meridiani Planum'dan Dünya'ya selamlar!",
+    pc_portrait: "ASTRONOT PORTRE ALANI", pc_portrait_hint: "(Kamera aç veya fotoğraf yükle)",
+    pc_t1: "MARS'TAN", pc_t2: "SELAMLAR!", pc_from: "GÖNDEREN: ",
+    pc_loc: "KONUM: MERIDIANI PLANUM (1.95°S, 354.47°E) · EAGLE KRATERİ",
+    cam_unsup: "Tarayıcınız kamera erişimini desteklemiyor. Lütfen fotoğraf yükleyin.",
+    cam_denied: "Kamera izni alınamadı. Cihazınızdan fotoğraf yükleyebilirsiniz.",
+    tabs: ["📄 PROJECT WHITEPAPER","📊 GÖREV & SI ÖZETİ","🛰️ NASA API & TELEMETRİ","🏆 JÜRİ DEĞERLENDİRME KRİTERLERİ"],
+    titles: null
+  },
+  en: {
+    wind: "Wind", pres: "PRESSURE", offline_note: "NASA servers are unreachable — showing offline archive illustrations.", pc_wx: "MARS WEATHER",
+    ai_tel: "🛰️ MARS TELEMETRY:", pill_title: "NASA Mars Weather Telemetry", lang_aria: "Language",
+    pc_name_ph: "Explorer name (e.g. Astronaut Alex)", pc_msg_ph: "Postcard message (e.g. Greetings from Meridiani Planum!)",
+    pc_def_name: "EXPLORER", pc_def_msg: "Greetings from Meridiani Planum to Earth!",
+    pc_portrait: "ASTRONAUT PORTRAIT AREA", pc_portrait_hint: "(Open camera or upload a photo)",
+    pc_t1: "GREETINGS", pc_t2: "FROM MARS!", pc_from: "FROM: ",
+    pc_loc: "LOCATION: MERIDIANI PLANUM (1.95°S, 354.47°E) · EAGLE CRATER",
+    cam_unsup: "Your browser does not support camera access. Please upload a photo instead.",
+    cam_denied: "Camera permission was denied. You can upload a photo from your device.",
+    tabs: ["📄 PROJECT WHITEPAPER","📊 MISSION & SI SUMMARY","🛰️ NASA API & TELEMETRY","🏆 JURY EVALUATION CRITERIA"],
+    titles: {s1:"00 · Start",s2:"01 · Launch",s3:"02 · Landing",s4:"03 · Discovery",s5:"04 · The Long Road",s6:"05 · Last Signal",s7:"06 · Legacy","s-timeline":"07 · Timeline",s7a:"08 · Anatomy",s7b:"09 · Craters",s7c:"10 · Twin & Meteorite",s7d:"11 · Records",s8:"12 · Rover's Eyes","s-postcard":"13 · Mars Postcard",s8a:"14 · SI Units",s8b:"15 · NASA Archive",s8c:"16 · Architecture",s9:"17 · Quiz"},
+    panes: {
+      "tab-wp": `<h4>1. EXECUTIVE SUMMARY</h4>
+      <p><b>Space Echoes</b> is a next-generation digital heritage and STEM education platform that preserves the 15-year scientific legacy of NASA's Mars Exploration Rover-B (Opportunity). It combines open space data with interactive storytelling, live climate telemetry and AI guidance.</p>
+      <h4>2. PROBLEM DEFINITION AND ENGINEERING APPROACH</h4>
+      <p>Hundreds of thousands of raw photos and sensor readings in the NASA Planetary Data System (PDS) and open APIs are hard for students and the general public to use because of their technical formats. Space Echoes processes this data within seconds and turns it into a meaningful experience using pure (vanilla) HTML5, CSS3, Canvas and the Web Audio API, with no heavy external libraries or paid backend servers.</p>
+      <h4>3. KEY INNOVATIVE MODULES</h4>
+      <ul>
+        <li><b>Synthetic Mars Ambience Engine (Web Audio API):</b> Simulates the thin Martian wind in real time with in-browser low-frequency oscillators and pink-noise filters, avoiding any copyright issues.</li>
+        <li><b>Live Mars Weather &amp; MER-B AI:</b> Fetches NASA Mars weather telemetry and explains current temperature, wind and pressure in natural language through the AI assistant.</li>
+        <li><b>Greetings from Mars Postcard Studio:</b> Uses webcam access and HTML5 Canvas so users can merge their own photo with a Meridiani Planum telemetry stamp and download it.</li>
+      </ul>`,
+      "tab-ov": `<div class="overview-grid">
+        <div class="ov-section">
+          <h4>01 · CHRONOLOGY &amp; MISSION SUMMARY</h4>
+          <ul>
+            <li><b>Launch:</b> July 7, 2003 (Delta II rocket, Cape Canaveral)</li>
+            <li><b>Landing on Mars:</b> January 24, 2004 (Meridiani Planum / Eagle Crater)</li>
+            <li><b>Planned duration:</b> 90 Martian days (sols) → <b>Actual:</b> 5,111 sols (~15 years / 57×)</li>
+            <li><b>Last signal:</b> June 10, 2018 (global dust storm)</li>
+            <li><b>Official end:</b> February 13, 2019 (NASA JPL)</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>02 · ENGINEERING &amp; SI DATA</h4>
+          <ul>
+            <li><b>Mass &amp; size:</b> 185 kg rover mass (1,063 kg at launch), 2.3 m length</li>
+            <li><b>Mobility:</b> 6 wheels (0.26 m diameter), 0.05 m/s top speed, 45,160 m (45.16 km) driven</li>
+            <li><b>Planetary physics:</b> Mars gravity 3.71 m/s², 1 sol = 88,775 seconds</li>
+            <li><b>Science instruments:</b> Pancam, Microscopic Imager, RAT, spectrometers</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>03 · DISCOVERIES &amp; RECORDS</h4>
+          <ul>
+            <li><b>Evidence of liquid water:</b> Hematite spheres ('blueberries') proved the past presence of water.</li>
+            <li><b>Craters explored:</b> Eagle, Endurance, Victoria and the 22 km wide Endeavour.</li>
+            <li><b>First meteorite off Earth:</b> Heat Shield Rock (January 2005).</li>
+            <li><b>Distance record:</b> Longest drive by any vehicle off Earth (2015 Mars Marathon).</li>
+          </ul>
+        </div>
+      </div>`,
+      "tab-api": `<h4>INTEGRATED NASA OPEN DATA SOURCES</h4>
+      <ul>
+        <li><b>1. NASA Mars Rover Photos API:</b> Streams Opportunity's original sol-based surface photos from the Pancam and Navcam cameras into the dynamic gallery.</li>
+        <li><b>2. NASA Image and Video Library API:</b> Queries high-resolution background images and crater panoramas for every story chapter.</li>
+        <li><b>3. NASA EPIC (Earth Polychromatic Imaging Camera) API:</b> Brings a time-stamped Earth observation image from the DSCOVR satellite archive onto the cover scene.</li>
+        <li><b>4. NASA Mars Weather / InSight Telemetry Feed:</b> Delivers seasonal temperature (°C), wind speed (m/s) and atmospheric pressure (Pa) data from the Martian surface live.</li>
+      </ul>`,
+      "tab-jury": `<div class="overview-grid">
+        <div class="ov-section">
+          <h4>SCIENTIFIC ACCURACY &amp; IMPACT</h4>
+          <ul>
+            <li>All physical quantities are verified against International System of Units (SI) standards.</li>
+            <li>The scope-limited AI assistant minimises hallucination risk by presenting only verified NASA mission data.</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>ACCESSIBILITY &amp; SCALABILITY</h4>
+          <ul>
+            <li><b>Trilingual architecture (TR/EN/DE):</b> Instant translation without reloading the page, for global reach.</li>
+            <li><b>Zero server cost:</b> Its single-file architecture lets schools and science centers publish it immediately.</li>
+          </ul>
+        </div>
+      </div>`
+    }
+  },
+  de: {
+    wind: "Wind", pres: "DRUCK", offline_note: "NASA-Server nicht erreichbar – Offline-Archivillustrationen werden angezeigt.", pc_wx: "MARSWETTER",
+    ai_tel: "🛰️ MARS-TELEMETRIE:", pill_title: "NASA-Marswetter-Telemetrie", lang_aria: "Sprache",
+    pc_name_ph: "Name des Forschers (z. B. Astronaut Alex)", pc_msg_ph: "Postkartentext (z. B. Grüße vom Meridiani Planum!)",
+    pc_def_name: "FORSCHER", pc_def_msg: "Grüße vom Meridiani Planum zur Erde!",
+    pc_portrait: "ASTRONAUTEN-PORTRÄTFELD", pc_portrait_hint: "(Kamera öffnen oder Foto hochladen)",
+    pc_t1: "GRÜSSE", pc_t2: "VOM MARS!", pc_from: "VON: ",
+    pc_loc: "ORT: MERIDIANI PLANUM (1,95°S, 354,47°O) · EAGLE-KRATER",
+    cam_unsup: "Ihr Browser unterstützt keinen Kamerazugriff. Bitte laden Sie stattdessen ein Foto hoch.",
+    cam_denied: "Kamerazugriff wurde verweigert. Sie können ein Foto von Ihrem Gerät hochladen.",
+    tabs: ["📄 PROJECT WHITEPAPER","📊 MISSION & SI-ÜBERSICHT","🛰️ NASA-API & TELEMETRIE","🏆 BEWERTUNGSKRITERIEN"],
+    titles: {s1:"00 · Start",s2:"01 · Raketenstart",s3:"02 · Landung",s4:"03 · Entdeckung",s5:"04 · Der lange Weg",s6:"05 · Letztes Signal",s7:"06 · Vermächtnis","s-timeline":"07 · Zeitleiste",s7a:"08 · Anatomie",s7b:"09 · Krater",s7c:"10 · Zwilling & Meteorit",s7d:"11 · Rekorde",s8:"12 · Aus Roversicht","s-postcard":"13 · Mars-Postkarte",s8a:"14 · SI-Einheiten",s8b:"15 · NASA-Archiv",s8c:"16 · Architektur",s9:"17 · Quiz"},
+    panes: {
+      "tab-wp": `<h4>1. ZUSAMMENFASSUNG</h4>
+      <p><b>Space Echoes</b> ist eine digitale Erbe- und MINT-Bildungsplattform der nächsten Generation, die das 15-jährige wissenschaftliche Vermächtnis der NASA-Mission Mars Exploration Rover-B (Opportunity) bewahrt. Sie verbindet offene Raumfahrtdaten mit interaktivem Storytelling, Live-Klimatelemetrie und KI-Begleitung.</p>
+      <h4>2. PROBLEMSTELLUNG UND TECHNISCHER ANSATZ</h4>
+      <p>Hunderttausende Rohfotos und Sensordaten im NASA Planetary Data System (PDS) und in offenen APIs sind für Schüler und die Öffentlichkeit wegen ihrer technischen Formate schwer nutzbar. Space Echoes verarbeitet diese Daten in Sekunden und macht daraus ein verständliches Erlebnis – mit reinem (Vanilla) HTML5, CSS3, Canvas und der Web Audio API, ohne schwere externe Bibliotheken oder kostenpflichtige Backend-Server.</p>
+      <h4>3. INNOVATIVE KERNMODULE</h4>
+      <ul>
+        <li><b>Synthetische Mars-Klangkulisse (Web Audio API):</b> Simuliert den dünnen Marswind in Echtzeit mit Niederfrequenz-Oszillatoren und Rosa-Rausch-Filtern im Browser – ganz ohne Urheberrechtsprobleme.</li>
+        <li><b>Live-Marswetter &amp; MER-B KI:</b> Ruft NASA-Wetterdaten vom Mars ab und erklärt aktuelle Temperatur, Wind und Druck in natürlicher Sprache über den KI-Assistenten.</li>
+        <li><b>Mars-Postkartenstudio:</b> Nutzt Webcam-Zugriff und HTML5 Canvas, damit Nutzer ihr eigenes Foto mit einem Meridiani-Planum-Telemetriestempel verbinden und herunterladen können.</li>
+      </ul>`,
+      "tab-ov": `<div class="overview-grid">
+        <div class="ov-section">
+          <h4>01 · CHRONOLOGIE &amp; MISSIONSÜBERBLICK</h4>
+          <ul>
+            <li><b>Start:</b> 7. Juli 2003 (Delta-II-Rakete, Cape Canaveral)</li>
+            <li><b>Landung auf dem Mars:</b> 24. Januar 2004 (Meridiani Planum / Eagle-Krater)</li>
+            <li><b>Geplante Dauer:</b> 90 Marstage (Sols) → <b>Tatsächlich:</b> 5.111 Sols (~15 Jahre / 57×)</li>
+            <li><b>Letztes Signal:</b> 10. Juni 2018 (globaler Staubsturm)</li>
+            <li><b>Offizielles Ende:</b> 13. Februar 2019 (NASA JPL)</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>02 · TECHNIK &amp; SI-DATEN</h4>
+          <ul>
+            <li><b>Masse &amp; Größe:</b> 185 kg Rover-Masse (1.063 kg Startmasse), 2,3 m Länge</li>
+            <li><b>Fortbewegung:</b> 6 Räder (0,26 m Durchmesser), 0,05 m/s Höchstgeschwindigkeit, 45.160 m (45,16 km) Strecke</li>
+            <li><b>Planetenphysik:</b> Mars-Schwerkraft 3,71 m/s², 1 Sol = 88.775 Sekunden</li>
+            <li><b>Wissenschaftliche Instrumente:</b> Pancam, Mikroskopkamera, RAT, Spektrometer</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>03 · ENTDECKUNGEN &amp; REKORDE</h4>
+          <ul>
+            <li><b>Nachweis flüssigen Wassers:</b> Hämatitkügelchen ('Blueberries') belegten früheres Wasser.</li>
+            <li><b>Erforschte Krater:</b> Eagle, Endurance, Victoria und der 22 km breite Endeavour.</li>
+            <li><b>Erster Meteorit außerhalb der Erde:</b> Heat Shield Rock (Januar 2005).</li>
+            <li><b>Distanzrekord:</b> Längste Fahrstrecke eines Fahrzeugs außerhalb der Erde (Mars-Marathon 2015).</li>
+          </ul>
+        </div>
+      </div>`,
+      "tab-api": `<h4>INTEGRIERTE NASA-OPEN-DATA-QUELLEN</h4>
+      <ul>
+        <li><b>1. NASA Mars Rover Photos API:</b> Überträgt Opportunitys originale, Sol-basierte Oberflächenfotos der Pancam- und Navcam-Kameras in die dynamische Galerie.</li>
+        <li><b>2. NASA Image and Video Library API:</b> Fragt hochauflösende Hintergrundbilder und Kraterpanoramen für jedes Story-Kapitel ab.</li>
+        <li><b>3. NASA EPIC (Earth Polychromatic Imaging Camera) API:</b> Bringt ein zeitgestempeltes Erdbeobachtungsbild aus dem Archiv des DSCOVR-Satelliten auf die Titelseite.</li>
+        <li><b>4. NASA Mars Weather / InSight Telemetry Feed:</b> Liefert saisonale Temperatur (°C), Windgeschwindigkeit (m/s) und Luftdruck (Pa) von der Marsoberfläche live.</li>
+      </ul>`,
+      "tab-jury": `<div class="overview-grid">
+        <div class="ov-section">
+          <h4>WISSENSCHAFTLICHE GENAUIGKEIT &amp; WIRKUNG</h4>
+          <ul>
+            <li>Alle physikalischen Größen wurden nach den Standards des Internationalen Einheitensystems (SI) geprüft.</li>
+            <li>Der themenbegrenzte KI-Assistent minimiert das Halluzinationsrisiko, indem er nur verifizierte NASA-Missionsdaten liefert.</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>BARRIEREFREIHEIT &amp; SKALIERBARKEIT</h4>
+          <ul>
+            <li><b>Dreisprachige Architektur (TR/EN/DE):</b> Sofortige Übersetzung ohne Neuladen der Seite für globale Reichweite.</li>
+            <li><b>Keine Serverkosten:</b> Dank Ein-Datei-Architektur sofort in Schulen und Science Centern einsetzbar.</li>
+          </ul>
+        </div>
+      </div>`
+    }
+  }
+};
+
+function applyExtraI18n(lang){
+  var X = UI_X[lang];
+  var set = function(id, prop, v){ var el = document.getElementById(id); if(el) el[prop] = v; };
+  set('pc-name','placeholder',X.pc_name_ph);
+  set('pc-msg','placeholder',X.pc_msg_ph);
+  set('mars-weather-pill','title',X.pill_title);
+  set('lang-select','ariaLabel',X.lang_aria);
+  var lbl = document.querySelector('#ai-weather-banner span:first-child');
+  if(lbl) lbl.textContent = X.ai_tel;
+  document.querySelectorAll('.m-tab').forEach(function(btn, i){ btn.textContent = X.tabs[i]; });
+  Object.keys(TAB_TR).forEach(function(id){
+    var pane = document.getElementById(id);
+    if(pane) pane.innerHTML = (X.panes && X.panes[id]) ? X.panes[id] : TAB_TR[id];
+  });
+  slides.forEach(function(sl, i){
+    var t = X.titles ? X.titles[sl.id] : sl.dataset.title;
+    if(t && dots[i]){ dots[i].title = t; dots[i].setAttribute('aria-label', t); }
+  });
+  updateWeatherUI();
+  renderPostcardCanvas();
+  if(offlineRover) renderOfflineRover();
+  if(offlineNasa) renderOfflineNasa();
+}
+
 /* ---- DİL DEĞİŞTİRME ---- */
 function changeLang(lang) {
   currentLang = lang;
@@ -1856,6 +2139,7 @@ function changeLang(lang) {
   document.getElementById('quiz-score-lbl').textContent = I18N[lang].score;
   initAiChat();
   renderTimeline();
+  applyExtraI18n(lang);
 
   var quizBodyStr = document.getElementById('quiz-body').innerHTML;
   if (quizBodyStr !== '') {
@@ -1963,15 +2247,21 @@ function tryUrls(urls, done){
   })();
 }
 function loadSlideBackgrounds(){
-  slides.forEach(function(slide){
-    if(slide.classList.contains('cover')) return;
+  slides.forEach(function(sl, i){
+    if(!sl.classList.contains('cover')) sl.style.backgroundImage = "url('" + sceneUri(i + 1, 1600, 900, i % 3 === 1) + "')";
+  });
+  var bgObs = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ bgObs.unobserve(e.target); loadBg(e.target); } });
+  }, { rootMargin: '120% 0px' });
+  slides.forEach(function(sl){ if(!sl.classList.contains('cover')) bgObs.observe(sl); });
+  function loadBg(slide){
     var cfg = SLIDE_IMG[slide.id];
     if(!cfg) return;
     var fbUrls = [];
     cfg.fb.forEach(function(id){ fbUrls = fbUrls.concat(assetUrls(id)); });
 
     Promise.all(cfg.q.map(function(q){
-      return fetch(NASA_IMAGES_BASE + '/search?q=' + encodeURIComponent(q) + '&media_type=image&page_size=4')
+      return fetchT(NASA_IMAGES_BASE + '/search?q=' + encodeURIComponent(q) + '&media_type=image&page_size=4')
         .then(function(res){ return res.ok ? res.json() : null; })
         .catch(function(){ return null; });
     })).then(function(results){
@@ -1991,7 +2281,7 @@ function loadSlideBackgrounds(){
         if(ok) slide.style.backgroundImage = "url('" + ok + "')";
       });
     });
-  });
+  }
 }
 
 /* ---- EPIC SATELLITE IMAGE ---- */
@@ -1999,13 +2289,13 @@ var EPIC_OLD_DATE = '2015-10-31';
 function loadEpicImage(){
   var credit = document.getElementById('epic-credit');
   var status = document.getElementById('nasa-status');
-  fetch('https://api.nasa.gov/EPIC/api/natural/date/' + EPIC_OLD_DATE + '?api_key=' + NASA_API_KEY)
+  fetchT('https://api.nasa.gov/EPIC/api/natural/date/' + EPIC_OLD_DATE + '?api_key=' + NASA_API_KEY)
     .then(function(res){ if(!res.ok) throw new Error('EPIC'); return res.json(); })
     .then(function(data){
       if(!data.length) throw new Error('no data');
       var pick = data[Math.floor(data.length / 2)];
       var p = pick.date.split(' ')[0].split('-');
-      var imgUrl = 'https://epic.gsfc.nasa.gov/archive/natural/' + p[0] + '/' + p[1] + '/' + p[2] + '/png/' + pick.image + '.png';
+      var imgUrl = 'https://epic.gsfc.nasa.gov/archive/natural/' + p[0] + '/' + p[1] + '/' + p[2] + '/jpg/' + pick.image + '.jpg';
       var img = new Image();
       img.onload = function(){
         document.querySelector('.cover').style.backgroundImage =
@@ -2031,99 +2321,120 @@ function loadEpicImage(){
     });
 }
 
-/* ---- OPPORTUNITY GALLERY ---- */
-function loadOpportunityGallery(){
-  var gallery = document.getElementById('rover-gallery');
-  if(!gallery) return;
-  var DATES = ['2004-01-25','2004-02-01','2004-03-01','2004-06-15','2005-01-01','2005-07-10','2006-09-26','2008-08-28','2011-08-10','2014-07-27'];
-  var MAX = 12;
-  var photos = [];
-  var idx = 0;
+/* ---- GERÇEK NASA FOTOĞRAFLARI (NASA Image Library + statik NASA arşiv URL'leri) ---- */
+var USED_THUMBS = {};
+var STATIC_PIA = ['PIA05199','PIA05181','PIA05150','PIA05151','PIA17956','PIA15024','PIA22908','PIA17271','PIA04413','PIA05575'];
 
-  function nextDate(){
-    if(idx >= DATES.length || photos.length >= MAX){ renderGallery(); return; }
-    var date = DATES[idx++];
-    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=' + date + '&api_key=' + NASA_API_KEY)
-      .then(function(res){ return res.ok ? res.json() : null; })
-      .then(function(data){
-        if(data && data.photos && data.photos.length){
-          photos = photos.concat(data.photos.slice(0,2));
-        }
-        nextDate();
-      })
-      .catch(function(){ nextDate(); });
-  }
-
-  function renderGallery(){
-    if(!photos.length){
-      gallery.innerHTML = '<p class="error" data-i18n="gal_err">' + I18N[currentLang].gal_err + '</p>';
-      return;
-    }
-    gallery.innerHTML = '';
-    photos.slice(0,MAX).forEach(function(p){
-      var fig = document.createElement('figure');
-      var img = document.createElement('img');
-      var captionText = 'SOL ' + p.sol + ' · ' + p.camera.full_name + ' (' + p.earth_date + ')';
-      img.src = p.img_src;
-      img.alt = captionText;
-      img.loading = 'lazy';
-      img.onerror = function(){ if(fig.parentNode) fig.parentNode.removeChild(fig); };
-      var cap = document.createElement('figcaption');
-      cap.textContent = 'SOL ' + p.sol + ' · ' + p.camera.name + ' · ' + p.earth_date;
-      fig.onclick = function(){ openLightbox(p.img_src, captionText); };
-      fig.appendChild(img);
-      fig.appendChild(cap);
-      gallery.appendChild(fig);
-    });
-  }
-  nextDate();
-}
-
-/* ---- NASA IMAGE LIBRARY GALLERY ---- */
-function loadNasaGallery(){
-  var gallery = document.getElementById('nasa-gallery');
-  if(!gallery) return;
-  var queries = ['Opportunity rover Mars','Endeavour crater Mars rover','Meridiani Planum','Victoria crater Mars'];
-  var seen = {};
-  var items = [];
-  Promise.all(queries.map(function(q){
-    return fetch(NASA_IMAGES_BASE + '/search?q=' + encodeURIComponent(q) + '&media_type=image&page_size=8')
+function nasaSearchItems(queries, perQ, pageSize){
+  return Promise.all(queries.map(function(q){
+    return fetchT(NASA_IMAGES_BASE + '/search?q=' + encodeURIComponent(q) + '&media_type=image&page_size=' + pageSize, 7000)
       .then(function(res){ return res.ok ? res.json() : null; })
       .catch(function(){ return null; });
   })).then(function(results){
-    results.forEach(function(data){
+    var lists = results.map(function(data){
+      var out = [];
       var list = data && data.collection && data.collection.items;
-      if(!list) return;
-      list.slice(0,4).forEach(function(it){
+      if(!list) return out;
+      list.forEach(function(it){
         var link = it.links && it.links[0] && it.links[0].href;
         var meta = it.data && it.data[0];
-        if(!link || !meta || seen[link]) return;
-        seen[link] = true;
-        items.push({ thumb: link, title: meta.title || '', date: (meta.date_created || '').slice(0,10) });
+        if(!link || !meta) return;
+        out.push({ thumb: link, title: meta.title || '', date: (meta.date_created || '').slice(0,10) });
       });
+      return out.slice(0, perQ);
     });
-    if(!items.length){
-      gallery.innerHTML = '<p class="error" data-i18n="gal_err">' + I18N[currentLang].gal_err + '</p>';
-      return;
+    // her sorgudan sırayla seç (çeşitlilik) ve tekrarları ele
+    var items = [];
+    for(var r = 0; r < perQ; r++){
+      lists.forEach(function(l){
+        var it = l[r];
+        if(!it || USED_THUMBS[it.thumb]) return;
+        USED_THUMBS[it.thumb] = true;
+        items.push(it);
+      });
     }
-    gallery.innerHTML = '';
-    items.slice(0,12).forEach(function(it){
-      var fig = document.createElement('figure');
-      var img = document.createElement('img');
-      var mediumSrc = it.thumb.replace('~thumb.jpg','~medium.jpg');
-      img.src = it.thumb.replace('~thumb.jpg','~small.jpg');
-      img.onerror = function(){ img.onerror = function(){ if(fig.parentNode) fig.parentNode.removeChild(fig); }; img.src = it.thumb; };
-      img.alt = it.title;
-      img.loading = 'lazy';
-      var cap = document.createElement('figcaption');
-      var t = it.title.length > 65 ? it.title.slice(0,62) + '...' : it.title;
-      cap.textContent = t + (it.date ? ' · ' + it.date : '');
-      fig.onclick = function(){ openLightbox(mediumSrc, it.title + (it.date ? ' (' + it.date + ')' : '')); };
-      fig.appendChild(img);
-      fig.appendChild(cap);
-      gallery.appendChild(fig);
-    });
+    return items;
   });
+}
+
+function toPhotoItem(it){
+  var base = it.thumb.replace('~thumb.jpg','');
+  return {
+    src: base + '~small.jpg',
+    alts: [base + '~medium.jpg', it.thumb],
+    big: base + '~medium.jpg',
+    title: it.title,
+    date: it.date
+  };
+}
+
+function staticPhotoItems(){
+  return STATIC_PIA.map(function(id){
+    var base = NASA_ASSETS + id + '/' + id;
+    return { src: base + '~medium.jpg', alts: [base + '~large.jpg', base + '~small.jpg', base + '~thumb.jpg'], big: base + '~medium.jpg', title: 'NASA/JPL-Caltech · ' + id, date: '' };
+  });
+}
+
+function renderPhotoGrid(id, items, onNone){
+  var g = document.getElementById(id);
+  if(!g) return;
+  g.innerHTML = '';
+  var total = items.length, settled = 0, loaded = 0, finished = false;
+  function done(ok){
+    settled++; if(ok) loaded++;
+    if(!finished && settled === total){
+      finished = true;
+      if(loaded === 0) onNone();
+    }
+  }
+  items.forEach(function(it){
+    var fig = document.createElement('figure');
+    var img = document.createElement('img');
+    var chain = [it.src].concat(it.alts || []);
+    var step = 0, reported = false;
+    img.alt = it.title;
+    img.onload = function(){ if(!reported){ reported = true; done(true); } };
+    img.onerror = function(){
+      step++;
+      if(step < chain.length){ img.src = chain[step]; return; }
+      if(fig.parentNode) fig.parentNode.removeChild(fig);
+      if(!reported){ reported = true; done(false); }
+    };
+    img.src = chain[0];
+    var cap = document.createElement('figcaption');
+    var t = it.title.length > 65 ? it.title.slice(0,62) + '...' : it.title;
+    cap.textContent = t + (it.date ? ' · ' + it.date : '');
+    fig.onclick = function(){ openLightbox(it.big, it.title + (it.date ? ' (' + it.date + ')' : '')); };
+    fig.appendChild(img);
+    fig.appendChild(cap);
+    g.appendChild(fig);
+  });
+}
+
+function loadGallery(galleryId, queries, perQ, max, onOfflineFlag){
+  var staticFirst = galleryId === 'rover-gallery';
+  nasaSearchItems(queries, perQ, 8).then(function(found){
+    var items = found.slice(0, max).map(toPhotoItem);
+    if(!items.length){
+      // API ulaşılamıyorsa: statik NASA arşiv URL'leri
+      items = staticFirst ? staticPhotoItems().slice(0, max) : staticPhotoItems().slice(0, max).reverse();
+    }
+    renderPhotoGrid(galleryId, items, function(){ onOfflineFlag(); });
+  });
+}
+
+function loadOpportunityGallery(){
+  loadGallery('rover-gallery', [
+    'Opportunity rover Mars surface','Opportunity rover panorama','Opportunity rover self portrait','Opportunity rover tracks',
+    'Opportunity rover Eagle crater','Opportunity rover Heat Shield Rock','Opportunity rover dust storm','Opportunity rover wheel tracks sand'
+  ], 3, 12, function(){ offlineRover = true; renderOfflineRover(); });
+}
+
+function loadNasaGallery(){
+  loadGallery('nasa-gallery', [
+    'Endeavour crater Mars rover','Victoria crater Mars','Meridiani Planum','Endurance crater Mars',
+    'Mars Exploration Rover Spirit Gusev','Mars Exploration Rover launch','Mars hematite blueberries','Perseverance Valley Mars'
+  ], 3, 12, function(){ offlineNasa = true; renderOfflineNasa(); });
 }
 
 /* ---- QUIZ (32 SORULUK HAVUZ) ---- */
@@ -2380,7 +2691,7 @@ document.getElementById('start-quiz-btn').addEventListener('click', function(){
 });
 
 document.addEventListener('DOMContentLoaded', function(){
-  changeLang('tr');
+  changeLang('en');
   loadEpicImage();
   loadMarsWeather();
   loadOpportunityGallery();
