@@ -1,0 +1,2394 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050b18'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%23c1440e'/%3E%3Ccircle cx='26' cy='27' r='3' fill='%23e07b4c'/%3E%3Ccircle cx='38' cy='38' r='4' fill='%23e07b4c'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='9' fill='none' stroke='%234fc3f7' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3C/svg%3E">
+<title>SPACE ECHOES | Opportunity Dijital Miras &amp; AI Asistan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;600;700&display=swap');
+
+:root{
+  --bg:#050b18; --panel:#101d32; --panel-glass:rgba(16, 29, 50, 0.85);
+  --cyan:#4fc3f7; --amber:#ffbd73; --white:#f4f7fb;
+  --muted:#9aabc2; --border:#273b56; --green:#4caf50; --red:#e57373;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+@media (min-width:800px) and (min-height:620px){html{scroll-snap-type:y mandatory}}
+body{margin:0;background:var(--bg);color:var(--white);font-family:'Public Sans',sans-serif;overflow-x:hidden}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 5%;
+  background:linear-gradient(180deg, rgba(5,11,24,.97) 0%, rgba(5,11,24,.82) 70%, rgba(5,11,24,0) 100%);
+  backdrop-filter:blur(8px);
+}
+.brand{font-family:Inter,sans-serif;font-weight:800;color:var(--cyan);text-decoration:none;letter-spacing:2px;font-size:17px;display:flex;align-items:center;gap:8px}
+.brand span{font-size:10px;background:rgba(79,195,247,.15);border:1px solid var(--cyan);padding:2px 6px;border-radius:3px;letter-spacing:1px}
+.nav-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.nav-tag{font:11px 'DM Mono',monospace;color:var(--muted);letter-spacing:1px}
+
+/* CANLI MARS HAVA DURUMU PILL */
+.mars-weather-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255, 189, 115, 0.12);
+  border: 1px solid rgba(255, 189, 115, 0.45);
+  color: var(--amber);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font: 11px 'DM Mono', monospace;
+  cursor: pointer;
+  transition: all .2s;
+}
+.mars-weather-pill:hover { background: rgba(255, 189, 115, 0.25); }
+
+.hud-btn {
+  background: rgba(79, 195, 247, 0.14);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  padding: 6px 11px;
+  border-radius: 4px;
+  font: 11px 'DM Mono', monospace;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.8px;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hud-btn:hover, .hud-btn.active { background: var(--cyan); color: #050b18; }
+
+#lang-select {
+  background: rgba(16, 29, 50, 0.9);
+  color: var(--cyan);
+  border: 1px solid var(--border);
+  padding: 6px 9px;
+  border-radius: 4px;
+  font: 11px 'DM Mono', monospace;
+  outline: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+#lang-select option { background: var(--bg); color: var(--white); }
+
+/* SLIDES */
+.slide{
+  position:relative;min-height:100vh;min-height:100svh;
+  display:flex;align-items:center;padding:105px 8% 75px;
+  border-bottom:1px solid var(--border);scroll-snap-align:start;overflow:hidden;
+  background-color:var(--bg);background-size:cover;background-position:center;background-repeat:no-repeat;
+  transition:background-image .8s ease-in-out;
+}
+.slide::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background:linear-gradient(90deg,rgba(5,11,24,.95) 0%,rgba(5,11,24,.78) 55%,rgba(5,11,24,.38) 100%);
+}
+.slide::after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 80% 30%, rgba(79,195,247,.08), transparent 55%);
+}
+.slide-inner{position:relative;max-width:780px;z-index:1;width:100%}
+.slide-inner.wide{max-width:1160px}
+.eyebrow{color:var(--cyan);font:12px 'DM Mono',monospace;letter-spacing:2px;margin:0}
+.slide h2{
+  font-family:Inter,sans-serif;font-size:clamp(30px,5vw,60px);line-height:1.06;
+  letter-spacing:-1.5px;margin:12px 0 20px;text-shadow:0 2px 20px rgba(0,0,0,.7);
+}
+.slide h2.big{font-size:clamp(34px,6vw,72px)}
+.text{max-width:620px;font-size:17px;line-height:1.8;color:#d6e0ee;text-shadow:0 1px 10px rgba(0,0,0,.6);margin:0}
+.api-credit{font:11px 'DM Mono',monospace;color:var(--muted);margin-top:18px;letter-spacing:1px}
+.chapter{
+  position:absolute;right:-10px;top:-65px;
+  font:800 clamp(110px,20vw,240px)/1 Inter,sans-serif;color:transparent;
+  -webkit-text-stroke:1px rgba(79,195,247,.22);pointer-events:none;user-select:none;
+}
+
+.visual-strip {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; max-width: 680px;
+}
+.v-card {
+  background: var(--panel-glass); border: 1px solid var(--border); border-radius: 6px;
+  padding: 12px 16px; flex: 1 1 190px; backdrop-filter: blur(4px);
+}
+.v-card strong { display: block; font: 700 13px 'DM Mono', monospace; color: var(--amber); margin-bottom: 4px; }
+.v-card span { font-size: 13px; color: var(--muted); line-height: 1.45; display: block; }
+
+.cover{
+  background-image:
+    linear-gradient(90deg,rgba(5,11,24,.96),rgba(5,11,24,.45)),
+    url('https://images-assets.nasa.gov/image/PIA04413/PIA04413~orig.jpg');
+}
+.cover h1{
+  font-family:Inter,sans-serif;font-size:clamp(46px,8.5vw,100px);line-height:.95;
+  margin:22px 0;letter-spacing:-3.5px;text-shadow:0 4px 30px rgba(0,0,0,.8);
+}
+.cover h1 span{color:var(--cyan)}
+.cover h2{color:var(--amber);letter-spacing:4px;font-size:clamp(15px,1.9vw,21px);margin:0 0 18px}
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+.btn-outline {
+  padding: 14px 24px; background: rgba(16,29,50,.8); color: var(--white);
+  border: 1px solid var(--cyan); border-radius: 3px; font-weight: 600; font-size: 14px;
+  letter-spacing: 1px; cursor: pointer; text-decoration: none; transition: all .2s;
+}
+.btn-outline:hover { background: var(--cyan); color: #050b18; }
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:26px}
+.gallery figure{
+  margin:0;background:var(--panel);border:1px solid var(--border);border-radius:6px;
+  overflow:hidden;transition:transform .3s ease,border-color .3s ease;cursor:pointer;position:relative;
+}
+.gallery figure:hover{transform:translateY(-4px);border-color:var(--cyan)}
+.gallery img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#0a1424}
+.gallery figcaption{padding:9px 11px;font:11px 'DM Mono',monospace;color:var(--muted);line-height:1.45}
+.gallery .loading,.gallery .error{grid-column:1/-1;color:var(--muted);font:12px 'DM Mono',monospace;padding:24px 0}
+
+/* INTERACTIVE TIMELINE */
+.timeline-track {
+  display: flex; gap: 10px; overflow-x: auto; padding: 14px 4px 18px;
+  margin-top: 24px; scrollbar-width: thin; scrollbar-color: var(--cyan) var(--panel);
+}
+.tl-node {
+  flex: 0 0 155px; background: var(--panel-glass); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; cursor: pointer; text-align: left;
+  transition: all .25s; position: relative; color: var(--white);
+}
+.tl-node:hover { border-color: var(--cyan); transform: translateY(-3px); }
+.tl-node.active {
+  border-color: var(--amber); background: rgba(255, 189, 115, 0.14);
+  box-shadow: 0 0 20px rgba(255, 189, 115, 0.2);
+}
+.tl-year { font: 700 13px 'DM Mono', monospace; color: var(--amber); display: block; }
+.tl-sol { font: 10px 'DM Mono', monospace; color: var(--cyan); display: block; margin: 3px 0 8px; }
+.tl-label { font: 600 13.5px Inter, sans-serif; line-height: 1.35; display: block; }
+
+.tl-detail-box {
+  margin-top: 16px; background: var(--panel-glass); border: 1px solid var(--cyan);
+  border-radius: 8px; padding: 22px 26px; backdrop-filter: blur(8px);
+  display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center;
+}
+.tl-detail-box h3 { margin: 0 0 8px; font-family: Inter, sans-serif; font-size: 20px; color: var(--amber); }
+.tl-detail-box p { margin: 0 0 12px; font-size: 15px; line-height: 1.65; color: #dce6f5; }
+.tl-meta { font: 11px 'DM Mono', monospace; color: var(--cyan); }
+
+/* MARS POSTCARD STUDIO */
+.postcard-grid {
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px; margin-top: 24px; align-items: start;
+}
+@media (max-width: 860px) { .postcard-grid { grid-template-columns: 1fr; } }
+.pc-controls {
+  background: var(--panel-glass); border: 1px solid var(--border); border-radius: 8px;
+  padding: 20px; display: flex; flex-direction: column; gap: 14px;
+}
+.pc-btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.pc-input {
+  width: 100%; background: #081224; border: 1px solid var(--border); border-radius: 5px;
+  padding: 10px 12px; color: var(--white); font-family: inherit; font-size: 13.5px; outline: none;
+}
+.pc-input:focus { border-color: var(--cyan); }
+.pc-preview-wrap {
+  background: #081224; border: 1px solid var(--cyan); border-radius: 8px;
+  padding: 12px; text-align: center; position: relative;
+}
+.pc-preview-wrap canvas, .pc-preview-wrap video {
+  width: 100%; max-width: 520px; border-radius: 6px; display: block; margin: 0 auto;
+  background: #040812;
+}
+
+/* SECTION 14 */
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+}
+.arch-card {
+  background: var(--panel-glass);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+  transition: border-color .25s, transform .25s;
+}
+.arch-card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+.arch-tag {
+  display: inline-block;
+  font: 10px 'DM Mono', monospace;
+  color: var(--cyan);
+  background: rgba(79,195,247,.12);
+  border: 1px solid rgba(79,195,247,.35);
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.arch-card h3 { font-family: Inter, sans-serif; font-size: 17px; margin: 0 0 10px; color: var(--white); }
+.arch-card p { font-size: 14px; line-height: 1.65; color: #c2d1e5; margin: 0; }
+.arch-list { margin: 10px 0 0; padding-left: 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.arch-list li { margin-bottom: 4px; }
+.arch-list b { color: var(--amber); font-weight: 600; }
+
+.finale .slide-inner{max-width:900px}
+.main-button{
+  display:inline-block;margin-top:26px;padding:16px 30px;
+  background:var(--cyan);color:#061322;font-weight:700;letter-spacing:1px;
+  border-radius:3px;border:none;cursor:pointer;font-size:15px;font-family:inherit;
+  transition:background .2s;
+}
+.main-button:hover{background:#fff}
+
+/* ANIMATIONS */
+.slide-inner>*{ opacity:0;transform:translateY(24px); transition:opacity .7s ease,transform .7s ease; }
+.slide.in .slide-inner>*{opacity:1;transform:none}
+.slide.in .slide-inner>*:nth-child(2){transition-delay:.07s}
+.slide.in .slide-inner>*:nth-child(3){transition-delay:.14s}
+.slide.in .slide-inner>*:nth-child(4){transition-delay:.21s}
+.slide.in .slide-inner>*:nth-child(5){transition-delay:.28s}
+.slide.in .slide-inner>*:nth-child(6){transition-delay:.35s}
+.slide-inner>.chapter{opacity:1;transform:none;transition:none}
+
+/* DOTS */
+.dots{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:25;
+  display:flex;flex-direction:column;gap:9px;
+}
+.dots a{
+  position:relative;display:block;width:8px;height:8px;border-radius:50%;
+  border:1px solid var(--cyan);background:transparent;transition:all .25s;
+}
+.dots a:hover{background:rgba(79,195,247,.5)}
+.dots a.active{background:var(--cyan);transform:scale(1.35)}
+.dots a::before{
+  content:attr(title);position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  background:var(--panel);color:var(--white);border:1px solid var(--border);
+  padding:3px 8px;border-radius:3px;font:10px 'DM Mono',monospace;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.dots a:hover::before{opacity:1}
+
+footer{
+  padding:35px;text-align:center;color:var(--muted);
+  font:11px 'DM Mono',monospace;scroll-snap-align:end;
+}
+footer a{color:var(--cyan);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-top:24px;max-width:860px}
+.fact{background:var(--panel-glass);border:1px solid var(--border);border-radius:6px;padding:15px 13px;backdrop-filter:blur(4px)}
+.fact b{display:block;font:800 clamp(20px,2.8vw,28px)/1.1 Inter,sans-serif;color:var(--cyan)}
+.fact span{display:block;margin-top:7px;font:11px 'DM Mono',monospace;color:var(--muted);letter-spacing:1px;line-height:1.45}
+
+/* QUIZ */
+.quiz-section{
+  scroll-snap-align:start;padding:110px 8% 100px;
+  background:radial-gradient(circle at 50% 20%,rgba(11,61,145,.45),transparent 60%),var(--bg);
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-bottom:1px solid var(--border);
+}
+.quiz-wrap{max-width:720px;width:100%}
+.quiz-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:28px;font:12px 'DM Mono',monospace;color:var(--muted);letter-spacing:2px;
+}
+.quiz-header .score{color:var(--cyan)}
+.quiz-question{
+  font-family:Inter,sans-serif;font-size:clamp(21px,3vw,30px);
+  line-height:1.25;letter-spacing:-.5px;margin:0 0 26px;
+}
+.quiz-options{display:flex;flex-direction:column;gap:11px}
+.quiz-option{
+  text-align:left;padding:16px 20px;background:var(--panel);
+  border:1px solid var(--border);border-radius:6px;color:var(--white);
+  font-family:inherit;font-size:15px;cursor:pointer;transition:all .2s;
+}
+.quiz-option:hover:not(:disabled){border-color:var(--cyan);background:#152740}
+.quiz-option:disabled{cursor:default;opacity:.85}
+.quiz-option.correct{border-color:var(--green);background:rgba(76,175,80,.15)}
+.quiz-option.wrong{border-color:var(--red);background:rgba(229,115,115,.15)}
+.quiz-option:disabled.correct{opacity:1}
+.quiz-feedback{margin-top:20px;font:13px 'DM Mono',monospace;color:var(--muted);min-height:22px;line-height:1.6}
+.quiz-feedback.ok{color:var(--green)}
+.quiz-feedback.no{color:var(--red)}
+.quiz-next{
+  margin-top:20px;padding:13px 26px;background:var(--cyan);color:#061322;
+  border:none;border-radius:3px;font-weight:700;font-size:14px;letter-spacing:1px;
+  cursor:pointer;font-family:inherit;display:none;
+}
+.quiz-next:hover{background:#fff}
+.quiz-result{text-align:center}
+.quiz-result h2{font-family:Inter,sans-serif;font-size:clamp(28px,5vw,50px);margin:10px 0 18px}
+.quiz-result .final-score{font:800 68px/1 Inter,sans-serif;color:var(--cyan);margin:18px 0}
+.quiz-result p{color:var(--muted);font-size:16px;line-height:1.7}
+.quiz-restart{
+  margin-top:26px;padding:13px 26px;background:transparent;color:var(--cyan);
+  border:1px solid var(--cyan);border-radius:3px;font-weight:700;font-size:14px;
+  letter-spacing:1px;cursor:pointer;font-family:inherit;
+}
+.quiz-restart:hover{background:rgba(79,195,247,.1)}
+
+/* MODAL & WHITEPAPER TABS */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(3, 7, 16, 0.92); backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center; padding: 24px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #0b1526; border: 1px solid var(--cyan); border-radius: 10px;
+  max-width: 1120px; width: 100%; max-height: 88vh; overflow-y: auto;
+  padding: 32px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,.85);
+}
+.modal-close {
+  position: sticky; top: 0; float: right;
+  background: var(--red); color: #050b18; border: none; border-radius: 4px;
+  padding: 6px 14px; font: 700 12px 'DM Mono', monospace; cursor: pointer; z-index: 10;
+}
+.modal-title { font-family: Inter, sans-serif; font-size: 26px; margin: 0 0 6px; color: var(--cyan); }
+.modal-sub { font: 12px 'DM Mono', monospace; color: var(--muted); margin: 0 0 18px; }
+
+.modal-tabs {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 22px;
+}
+.m-tab {
+  background: var(--panel); color: var(--muted); border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 5px; font: 600 11.5px 'DM Mono', monospace;
+  cursor: pointer; transition: all .2s;
+}
+.m-tab:hover { border-color: var(--cyan); color: var(--white); }
+.m-tab.active { background: var(--cyan); color: #050b18; border-color: var(--cyan); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+.overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.ov-section { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 18px; }
+.ov-section h4 {
+  font: 700 13px 'DM Mono', monospace; color: var(--amber); margin: 0 0 12px;
+  letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 6px;
+}
+.ov-section ul { margin: 0; padding-left: 16px; font-size: 13.5px; line-height: 1.65; color: #d6e0ee; }
+.ov-section li { margin-bottom: 6px; }
+.ov-section li b { color: var(--cyan); }
+.wp-doc { font-size: 14.5px; line-height: 1.75; color: #d6e0ee; }
+.wp-doc h4 { color: var(--amber); font-family: 'DM Mono', monospace; margin: 18px 0 8px; font-size: 14px; }
+
+.lightbox {
+  position: fixed; inset: 0; z-index: 120; background: rgba(2,5,12,.94);
+  display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 90vw; max-height: 76vh; border: 1px solid var(--cyan); border-radius: 6px; }
+.lightbox p { font: 13px 'DM Mono', monospace; color: var(--white); margin-top: 14px; text-align: center; max-width: 700px; }
+.lightbox button { margin-top: 12px; padding: 8px 20px; background: var(--cyan); color: #050b18; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; }
+
+/* ---- YUVARLAK VE HOVER İLE SAĞA AÇILAN MER-B AI BUTONU ---- */
+.ai-fab {
+  position: fixed; bottom: 24px; left: 24px; z-index: 90;
+  width: 54px; height: 54px;
+  background: linear-gradient(135deg, #0d2b4e, #153e6c);
+  color: var(--cyan); border: 1.5px solid var(--cyan);
+  border-radius: 999px; padding: 0 15px;
+  font: 600 12px 'DM Mono', monospace; letter-spacing: 0.8px;
+  cursor: pointer; display: flex; align-items: center; justify-content: flex-start;
+  overflow: hidden; white-space: nowrap;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.75), 0 0 18px rgba(79, 195, 247, 0.3);
+  transition: width 0.36s cubic-bezier(0.22, 1, 0.36, 1), background 0.25s, color 0.25s, box-shadow 0.25s;
+}
+.ai-fab:hover, .ai-fab.expanded {
+  width: 235px;
+  background: var(--cyan);
+  color: #050b18;
+  box-shadow: 0 10px 32px rgba(79, 195, 247, 0.45);
+}
+.ai-fab-icon {
+  font-size: 21px; line-height: 1; flex-shrink: 0; position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.ai-fab .pulse {
+  position: absolute; top: -2px; right: -3px;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 8px var(--green); border: 1px solid #050b18;
+}
+.ai-fab-text {
+  margin-left: 12px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.25s ease 0.08s, transform 0.25s ease 0.08s;
+}
+.ai-fab:hover .ai-fab-text, .ai-fab.expanded .ai-fab-text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ai-panel {
+  position: fixed; bottom: 88px; left: 24px; z-index: 95;
+  width: 380px; max-width: calc(100vw - 32px);
+  background: #0a1527; border: 1px solid var(--cyan); border-radius: 10px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.88);
+  display: none; flex-direction: column; overflow: hidden;
+}
+.ai-panel.open { display: flex; }
+
+.ai-head {
+  background: #10213b; padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ai-head-title { font: 700 12px 'DM Mono', monospace; color: var(--cyan); letter-spacing: 1px; }
+.ai-head-sub { font: 10px 'DM Mono', monospace; color: var(--muted); display: block; margin-top: 2px; }
+.ai-close {
+  background: transparent; border: none; color: var(--muted);
+  font-size: 16px; cursor: pointer; padding: 2px 6px;
+}
+.ai-close:hover { color: var(--white); }
+
+.ai-weather-banner {
+  background: rgba(255, 189, 115, 0.1);
+  border-bottom: 1px solid var(--border);
+  padding: 7px 14px;
+  font: 11px 'DM Mono', monospace;
+  color: var(--amber);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-messages {
+  padding: 14px; height: 280px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+  font-size: 13.5px; line-height: 1.55;
+}
+.ai-msg {
+  padding: 10px 13px; border-radius: 8px; max-width: 88%;
+  word-wrap: break-word;
+}
+.ai-msg.bot {
+  background: #13243f; border: 1px solid var(--border);
+  color: #e2ebf7; align-self: flex-start; border-bottom-left-radius: 2px;
+}
+.ai-msg.bot b { color: var(--cyan); }
+.ai-msg.user {
+  background: var(--cyan); color: #050b18; font-weight: 600;
+  align-self: flex-end; border-bottom-right-radius: 2px;
+}
+
+.ai-chips {
+  padding: 8px 12px; background: #08101e; border-top: 1px solid var(--border);
+  display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+}
+.ai-chips::-webkit-scrollbar { display: none; }
+.ai-chip {
+  background: rgba(79,195,247,.1); color: var(--cyan);
+  border: 1px solid rgba(79,195,247,.35); border-radius: 14px;
+  padding: 4px 10px; font: 11px 'DM Mono', monospace; white-space: nowrap;
+  cursor: pointer; transition: all .15s;
+}
+.ai-chip:hover { background: var(--cyan); color: #050b18; }
+
+.ai-input-row {
+  display: flex; border-top: 1px solid var(--border); background: #0d1b31;
+}
+.ai-input-row input {
+  flex: 1; background: transparent; border: none; color: var(--white);
+  padding: 12px 14px; font-family: inherit; font-size: 13px; outline: none;
+}
+.ai-input-row button {
+  background: var(--cyan); color: #050b18; border: none;
+  padding: 0 16px; font: 700 12px 'DM Mono', monospace; cursor: pointer;
+}
+.ai-input-row button:hover { background: #fff; }
+
+@media (max-width:750px){
+  .navbar{padding:12px 4%}
+  .slide{padding:95px 6% 65px}
+  .dots{right:8px;gap:8px}
+  .dots a{width:7px;height:7px}
+  .text{font-size:15.5px}
+  .gallery{grid-template-columns:repeat(2,1fr);gap:10px}
+  .nav-tag{display:none}
+  .ai-fab{bottom:16px;left:16px}
+  .ai-panel{bottom:78px;left:16px}
+  .tl-detail-box{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <a class="brand" href="#s1">SPACE ECHOES <span>MER-B</span></a>
+  <div class="nav-right">
+    <span class="nav-tag" id="nasa-status" data-i18n="api_conn">NASA API: BAĞLANIYOR...</span>
+    <button type="button" class="mars-weather-pill" id="mars-weather-pill" onclick="askAiFromWeather()" title="NASA Mars Hava Durumu Telemetrisi">
+      🌡️ MARS: <span id="nav-mars-temp">-62°C</span>
+    </button>
+    <button type="button" class="hud-btn" id="audio-toggle-btn" onclick="toggleMarsAudio()">
+      🔇 <span data-i18n="audio_off">MARS SESİ: KAPALI</span>
+    </button>
+    <button type="button" class="hud-btn" onclick="toggleOverviewModal('tab-wp')" data-i18n="btn_whitepaper">📄 WHITEPAPER / DOCS</button>
+    <select id="lang-select" onchange="changeLang(this.value)" aria-label="Dil Seçimi">
+      <option value="tr">TR</option>
+      <option value="en">EN</option>
+      <option value="de">DE</option>
+    </select>
+  </div>
+</header>
+
+<nav class="dots" id="dots" aria-label="Slaytlar"></nav>
+
+<main id="slides">
+
+  <!-- COVER -->
+  <section class="slide cover" id="s1" data-title="00 · Başlangıç">
+    <div class="slide-inner">
+      <p class="eyebrow" data-i18n="s1_eye">UZAY KEŞFİ / DİJİTAL MİRAS PLATFORMU</p>
+      <h1 data-i18n="s1_h1">OPPORTUNITY<br><span>HİKAYESİ</span></h1>
+      <h2 data-i18n="s1_h2">90 GÜNLÜK BİR GÖREVDEN 15 YILLIK DESTANA</h2>
+      <p class="text" data-i18n="s1_p">NASA'nın gerçek zamanlı açık veri API'leri ile desteklenen; Mars keşif robotu Opportunity'nin mühendislik hikayesini, bilimsel keşiflerini ve dijital mirasını sunan etkileşimli belgesel platformu.</p>
+      <div class="hero-actions">
+        <a href="#s2" class="btn-outline" data-i18n="btn_explore">HİKAYEYİ KEŞFET ↓</a>
+        <a href="#s-timeline" class="btn-outline" data-i18n="btn_timeline">ZAMAN ÇİZELGESİ ⏱</a>
+        <a href="#s-postcard" class="btn-outline" data-i18n="btn_postcard">MARS'TAN SELAM GÖNDER 📸</a>
+        <button type="button" class="btn-outline" onclick="toggleOverviewModal('tab-wp')" data-i18n="btn_all_info_hero">PROJECT WHITEPAPER 📄</button>
+      </div>
+      <p class="api-credit" id="epic-credit" data-i18n="s1_epic">🛰️ NASA EPIC arşivinden uydu görüntüsü yükleniyor...</p>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="slide" id="s2" data-title="01 · Fırlatma">
+    <div class="slide-inner">
+      <span class="chapter">01</span>
+      <p class="eyebrow" data-i18n="s2_eye">BÖLÜM 01 / FIRLATMA</p>
+      <h2 data-i18n="s2_h2">YOLCULUK BAŞLIYOR</h2>
+      <p class="text" data-i18n="s2_p">7 Temmuz 2003'te Opportunity (MER-B), ikizi Spirit'in ardından Cape Canaveral'dan Delta II roketiyle fırlatıldı. Önünde 456 milyon kilometrelik ve yaklaşık yedi aylık zorlu bir gezegenler arası yolculuk vardı.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v2_1t">FIRLATMA ARACI</strong><span data-i18n="v2_1d">Delta II 7925H Ağır Taşıyıcı Roket</span></div>
+        <div class="v-card"><strong data-i18n="v2_2t">SEYİR SÜRESİ</strong><span data-i18n="v2_2d">202 Dünya Günü (7 Temmuz 2003 – 24 Ocak 2004)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="slide" id="s3" data-title="02 · İniş">
+    <div class="slide-inner">
+      <span class="chapter">02</span>
+      <p class="eyebrow" data-i18n="s3_eye">BÖLÜM 02 / İNİŞ</p>
+      <h2 data-i18n="s3_h2">MARS'A İNİŞ</h2>
+      <p class="text" data-i18n="s3_p">24 Ocak 2004'te dev hava yastıkları (airbag) ile sekerek Mars'ın Meridiani Planum bölgesindeki küçük Eagle Krateri'nin tam içine indi. Planlanan görev süresi yalnızca 90 Mars günüydü (sol).</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v3_1t">İNİŞ SİSTEMİ</strong><span data-i18n="v3_1d">Süpersonik Paraşüt + 24 Hücreli Hava Yastığı</span></div>
+        <div class="v-card"><strong data-i18n="v3_2t">HEDEF BÖLGE</strong><span data-i18n="v3_2d">Meridiani Planum (Ekvatora yakın düz ova)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="slide" id="s4" data-title="03 · Keşif">
+    <div class="slide-inner">
+      <span class="chapter">03</span>
+      <p class="eyebrow" data-i18n="s4_eye">BÖLÜM 03 / KEŞİF</p>
+      <h2 data-i18n="s4_h2">SUYUN İZLERİ</h2>
+      <p class="text" data-i18n="s4_p">Kayalara ve minerallere bakarak Mars'ın geçmişinde sıvı su olduğuna dair ilk kesin jeolojik kanıtları buldu. Hematit açısından zengin küçük küreler 'yaban mersini' (blueberry) lakabıyla anıldı. Kırmızı gezegenin tarihi yeniden yazıldı.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v4_1t">JEOLOJİK BULGU</strong><span data-i18n="v4_1d">Suda oluşan gri hematit küreleri (Blueberries)</span></div>
+        <div class="v-card"><strong data-i18n="v4_2t">BİLİMSEL ANLAM</strong><span data-i18n="v4_2d">Antik Mars'ta yaşanabilir sulak ortam kanıtı</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="slide" id="s5" data-title="04 · Uzun Yol">
+    <div class="slide-inner">
+      <span class="chapter">04</span>
+      <p class="eyebrow" data-i18n="s5_eye">BÖLÜM 04 / UZUN YOL</p>
+      <h2 data-i18n="s5_h2">BEKLENENDEN ÇOK DAHA UZUN</h2>
+      <p class="text" data-i18n="s5_p">90 günlük görev, Mars rüzgârlarının güneş panellerindeki tozları temizlemesi sayesinde yaklaşık 15 yıla uzadı. Opportunity bu sürede engebeli arazide 45 kilometreden fazla yol kat etti.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v5_1t">DOĞAL TEMİZLİK</strong><span data-i18n="v5_1d">Toz şeytanları (dust devils) panelleri yeniledi</span></div>
+        <div class="v-card"><strong data-i18n="v5_2t">DAYANIKLILIK</strong><span data-i18n="v5_2d">Tekerlek ve robotik kol arızalarına rağmen sürüş</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="slide" id="s6" data-title="05 · Son Sinyal">
+    <div class="slide-inner">
+      <span class="chapter">05</span>
+      <p class="eyebrow" data-i18n="s6_eye">BÖLÜM 05 / KAYIP SİNYAL</p>
+      <h2 data-i18n="s6_h2">SON SİNYAL</h2>
+      <p class="text" data-i18n="s6_p">Haziran 2018'de tüm gezegeni saran devasa bir küresel toz fırtınası gökyüzünü kararttı ve güneş panellerine ulaşan ışığı kesti. Son iletişim 10 Haziran 2018'de alındı. 1.000'den fazla kurtarma komutunun ardından NASA görevi 13 Şubat 2019'da resmen sonlandırdı.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v6_1t">SON TELEMETRİ</strong><span data-i18n="v6_1d">10 Haziran 2018 · Perseverance Vadisi</span></div>
+        <div class="v-card"><strong data-i18n="v6_2t">RESMİ KAPANIŞ</strong><span data-i18n="v6_2d">13 Şubat 2019 · NASA JPL Kontrol Merkezi</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="slide" id="s7" data-title="06 · Miras">
+    <div class="slide-inner">
+      <span class="chapter">06</span>
+      <p class="eyebrow" data-i18n="s7_eye">BÖLÜM 06 / MİRAS</p>
+      <h2 data-i18n="s7_h2">GÖREVLER BİTER, KEŞİFLER KALIR</h2>
+      <p class="text" data-i18n="s7_p">Opportunity'nin gönderdiği 217.000'den fazla ham görüntü ve spektrometre verisi NASA Gezegen Veri Sistemi'nde (PDS) arşivlendi. Robot sustu, ama bilimsel yankısı bugün Curiosity ve Perseverance görevlerine ışık tutuyor.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v7_1t">GÖRSEL ARŞİV</strong><span data-i18n="v7_1d">217.594+ Ham Mars Yüzey Fotoğrafı</span></div>
+        <div class="v-card"><strong data-i18n="v7_2t">GELECEK ETKİSİ</strong><span data-i18n="v7_2d">İnsanlı Mars görevleri için rota ve zemin verisi</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- İNTERAKTİF GÖREV ZAMAN ÇİZELGESİ -->
+  <section class="slide" id="s-timeline" data-title="07 · Zaman Çizelgesi">
+    <div class="slide-inner wide">
+      <span class="chapter">07</span>
+      <p class="eyebrow" data-i18n="tl_eye">BÖLÜM 07 / İNTERAKTİF KRONOLOJİ</p>
+      <h2 data-i18n="tl_h2">15 YILLIK KEŞİF ZAMAN ÇİZELGESİ</h2>
+      <p class="text" data-i18n="tl_p">Opportunity'nin 2003'ten 2019'a kadar Mars yüzeyinde gerçekleştirdiği kritik bilimsel ve mühendislik dönüm noktalarını keşfetmek için tarihlere tıklayın.</p>
+
+      <div class="timeline-track" id="timeline-track"></div>
+      <div class="tl-detail-box" id="tl-detail-box"></div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="slide" id="s7a" data-title="08 · Anatomi">
+    <div class="slide-inner">
+      <span class="chapter">08</span>
+      <p class="eyebrow" data-i18n="n1_eye">BÖLÜM 08 / ANATOMİ</p>
+      <h2 data-i18n="n1_h2">BİR ROBOTUN ANATOMİSİ</h2>
+      <p class="text" data-i18n="n1_p">Opportunity, Mars'ta dolaşan otonom bir saha jeoloğu gibi tasarlandı: 360° panoramik kamera (Pancam), mikroskobik görüntüleyici (MI), Mössbauer/APXS spektrometreleri ve kayaların yüzeyini aşındırıp içine bakan Kaya Aşındırma Aleti (RAT) taşıyordu.</p>
+      <div class="facts">
+        <div class="fact"><b data-i18n="a1v">~185 kg</b><span data-i18n="a1l">KÜTLE</span></div>
+        <div class="fact"><b data-i18n="a2v">2,3 m</b><span data-i18n="a2l">UZUNLUK</span></div>
+        <div class="fact"><b data-i18n="a3v">6</b><span data-i18n="a3l">BAĞIMSIZ TEKERLEK</span></div>
+        <div class="fact"><b data-i18n="a4v">0,05 m/s</b><span data-i18n="a4l">EN YÜKSEK HIZ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="slide" id="s7b" data-title="09 · Kraterler">
+    <div class="slide-inner">
+      <span class="chapter">09</span>
+      <p class="eyebrow" data-i18n="n2_eye">BÖLÜM 09 / KRATERLER</p>
+      <h2 data-i18n="n2_h2">KRATERDEN KRATERE</h2>
+      <p class="text" data-i18n="n2_p">Opportunity, Eagle Krateri'ne adeta 'tam isabet' bir iniş yaptı. Ardından Endurance (2004) ve 800 metre genişliğindeki Victoria (2006–2008) kraterlerinin katmanlarını inceledi; 2011'de ise yaklaşık 22 km genişliğindeki devasa Endeavour Krateri'ne ulaştı.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong>2004 · EAGLE &amp; ENDURANCE</strong><span data-i18n="v8_1d">İlk su ve sülfat katmanı keşifleri</span></div>
+        <div class="v-card"><strong>2006–2011 · VICTORIA &amp; ENDEAVOUR</strong><span data-i18n="v8_2d">Kil mineralleri ve antik tatlı su izleri</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide" id="s7c" data-title="10 · İkiz & Göktaşı">
+    <div class="slide-inner">
+      <span class="chapter">10</span>
+      <p class="eyebrow" data-i18n="n3_eye">BÖLÜM 10 / İKİZ VE GÖKTAŞI</p>
+      <h2 data-i18n="n3_h2">İSİM, İKİZ VE BİR GÖKTAŞI</h2>
+      <p class="text" data-i18n="n3_p">Robotun adını 9 yaşındaki öğrenci Sofi Collis'in kazandığı bir yazı yarışması belirledi. İkizi Spirit, 4 Ocak 2004'te Gusev Krateri'ne indi. Ocak 2005'te Opportunity, başka bir gezegende keşfedilen ilk göktaşı olan demir-nikel yapılı 'Heat Shield Rock'u buldu.</p>
+      <div class="visual-strip">
+        <div class="v-card"><strong data-i18n="v9_1t">SOFİ COLLİS (9 YAŞ)</strong><span data-i18n="v9_1d">"Burada yıldızlara bakıp dilek tutacağım..."</span></div>
+        <div class="v-card"><strong>HEAT SHIELD ROCK</strong><span data-i18n="v9_2d">Dünya dışında bulunan ilk göktaşı (2005)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide" id="s7d" data-title="11 · Rekorlar">
+    <div class="slide-inner">
+      <span class="chapter">11</span>
+      <p class="eyebrow" data-i18n="n4_eye">BÖLÜM 11 / REKORLAR</p>
+      <h2 data-i18n="n4_h2">REKOR KIRAN ROBOT</h2>
+      <p class="text" data-i18n="n4_p">Opportunity, Sovyet Lunokhod 2'nin 40 yıllık rekorunu kırarak Dünya dışında en uzun mesafe kat eden tekerlekli araç oldu ve 2015 yılında Mars yüzeyinde tam maraton mesafesini (42,195 km) tamamladı.</p>
+      <div class="facts">
+        <div class="fact"><b data-i18n="b1v">45,16 km</b><span data-i18n="b1l">TOPLAM SÜRÜŞ MESAFESİ</span></div>
+        <div class="fact"><b data-i18n="b2v">5 111</b><span data-i18n="b2l">MARS GÜNÜ (SOL) ÇALIŞTI</span></div>
+        <div class="fact"><b data-i18n="b3v">~57×</b><span data-i18n="b3l">PLANLANAN SÜRENİN KATI</span></div>
+        <div class="fact"><b data-i18n="b4v">2015</b><span data-i18n="b4l">MARS MARATONU TAMAMLANDI</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="slide" id="s8" data-title="12 · Rover Gözünden">
+    <div class="slide-inner wide">
+      <span class="chapter">12</span>
+      <p class="eyebrow" data-i18n="s8_eye">BÖLÜM 12 / CANLI NASA ROVER VERİSİ</p>
+      <h2 data-i18n="s8_h2">OPPORTUNITY'NİN GÖZÜNDEN</h2>
+      <p class="text" data-i18n="s8_p">NASA Mars Rover Photos API'sinden doğrudan çekilen orijinal görev fotoğrafları. (Detaylı incelemek için fotoğraflara tıklayın)</p>
+      <div class="gallery" id="rover-gallery">
+        <p class="loading" data-i18n="gal_load">Görseller yükleniyor...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13: MARS'TAN SELAM KARTPOSTAL STÜDYOSU -->
+  <section class="slide" id="s-postcard" data-title="13 · Mars Kartpostalı">
+    <div class="slide-inner wide">
+      <span class="chapter">13</span>
+      <p class="eyebrow" data-i18n="pc_eye">BÖLÜM 13 / İNTERAKTİF DENEYİM</p>
+      <h2 data-i18n="pc_h2">MARS'TAN SELAM KARTPOSTALI OLUŞTUR</h2>
+      <p class="text" data-i18n="pc_p">Kameranı açıp kendi fotoğrafını çek veya cihazından bir fotoğraf yükle; Meridiani Planum telemetri damgalı özel "Greetings from Mars" hatıra kartpostalını oluşturup indir.</p>
+
+      <div class="postcard-grid">
+        <div class="pc-controls">
+          <div class="pc-btn-row">
+            <button type="button" class="hud-btn" onclick="startPostcardCamera()" data-i18n="pc_cam_btn">📷 KAMERAYI AÇ</button>
+            <button type="button" class="hud-btn" id="pc-snap-btn" onclick="capturePostcardPhoto()" style="display:none;" data-i18n="pc_snap_btn">📸 FOTOĞRAF ÇEK</button>
+            <label class="hud-btn" style="cursor:pointer;">
+              📁 <span data-i18n="pc_up_btn">FOTOĞRAF YÜKLE</span>
+              <input type="file" accept="image/*" onchange="uploadPostcardPhoto(event)" style="display:none;">
+            </label>
+          </div>
+          <input type="text" class="pc-input" id="pc-name" placeholder="Kaşif Adı (Örn: Astronot Ali)" oninput="renderPostcardCanvas()">
+          <input type="text" class="pc-input" id="pc-msg" placeholder="Kartpostal Mesajı (Örn: Meridiani Planum'dan sevgiler!)" oninput="renderPostcardCanvas()">
+          <button type="button" class="main-button" style="margin-top:4px;padding:12px 20px;font-size:13px;" onclick="downloadPostcard()" data-i18n="pc_dl_btn">⬇ KARTPOSTALI İNDİR (PNG)</button>
+        </div>
+
+        <div class="pc-preview-wrap">
+          <video id="pc-video" autoplay playsinline style="display:none;"></video>
+          <canvas id="pc-canvas" width="900" height="600"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section class="slide" id="s8a" data-title="14 · SI Birimleri">
+    <div class="slide-inner wide">
+      <span class="chapter">14</span>
+      <p class="eyebrow" data-i18n="c1_eye">BÖLÜM 14 / FİZİK &amp; SI BİRİMLERİ</p>
+      <h2 data-i18n="c1_h2">SI BİRİMLERİYLE OPPORTUNITY</h2>
+      <p class="text" data-i18n="c1_p">Uluslararası Birim Sistemi'ne (SI) göre mühendislik ve gezegen fiziği değerleri: kütle kilogram (kg), uzunluk metre (m), hız metre/saniye (m/s), ivme m/s², süre saniye (s).</p>
+      <div class="facts">
+        <div class="fact"><b data-i18n="c1v">1 063 kg</b><span data-i18n="c1l">FIRLATMA KÜTLESİ</span></div>
+        <div class="fact"><b data-i18n="c2v">185 kg</b><span data-i18n="c2l">ROVER KÜTLESİ</span></div>
+        <div class="fact"><b data-i18n="c3v">0,26 m</b><span data-i18n="c3l">TEKERLEK ÇAPI</span></div>
+        <div class="fact"><b data-i18n="c4v">0,05 m/s</b><span data-i18n="c4l">EN YÜKSEK HIZ</span></div>
+        <div class="fact"><b data-i18n="c5v">45 160 m</b><span data-i18n="c5l">TOPLAM YOL (SI)</span></div>
+        <div class="fact"><b data-i18n="c6v">3,71 m/s²</b><span data-i18n="c6l">MARS YERÇEKİMİ İVMESİ</span></div>
+        <div class="fact"><b data-i18n="c7v">88 775 s</b><span data-i18n="c7l">1 SOL (≈ 24 sa 39 dk)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section class="slide" id="s8b" data-title="15 · NASA Arşivi">
+    <div class="slide-inner wide">
+      <span class="chapter">15</span>
+      <p class="eyebrow" data-i18n="g2_eye">BÖLÜM 15 / NASA GÖRSEL KÜTÜPHANESİ</p>
+      <h2 data-i18n="g2_h2">MARS'TAN DAHA FAZLA KARE</h2>
+      <p class="text" data-i18n="g2_p">NASA Image and Video Library API üzerinden çekilen yüksek çözünürlüklü panorama, krater ve mühendislik görselleri.</p>
+      <div class="gallery" id="nasa-gallery">
+        <p class="loading" data-i18n="gal_load">Görseller yükleniyor...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 -->
+  <section class="slide" id="s8c" data-title="16 · Proje Mimarisi">
+    <div class="slide-inner wide">
+      <span class="chapter">16</span>
+      <p class="eyebrow" data-i18n="p14_eye">BÖLÜM 16 / PROJE MİMARİSİ, TEKNOLOJİ &amp; BİLİMSEL ETKİ</p>
+      <h2 data-i18n="p14_h2">SPACE ECHOES NASIL ÇALIŞIR?</h2>
+      <p class="text" data-i18n="p14_p">Karmaşık uzay mühendisliği verilerini herkes için erişilebilir, çok dilli ve etkileşimli bir dijital deneyime dönüştüren sistem mimarimiz ve proje kazanımlarımız.</p>
+      
+      <div class="arch-grid">
+        <div class="arch-card">
+          <span class="arch-tag" data-i18n="p14_c1_tag">01 · PROBLEM &amp; ÇÖZÜM</span>
+          <h3 data-i18n="p14_c1_h">Ham Veriden Anlamlı Hikayeye</h3>
+          <p data-i18n="p14_c1_p">NASA'nın açık arşivlerinde yüz binlerce ham görüntü ve teknik doküman bulunur ancak dağınık yapıdadır. Space Echoes, bu verileri kronolojik bir anlatı, SI fizik standartları ve oyunlaştırılmış quiz ile birleştirerek STEM eğitiminde kalıcı öğrenme sağlar.</p>
+        </div>
+
+        <div class="arch-card">
+          <span class="arch-tag" data-i18n="p14_c2_tag">02 · NASA API ENTEGRASYONU</span>
+          <h3 data-i18n="p14_c2_h">Canlı Çoklu Veri Kaynağı</h3>
+          <ul class="arch-list" data-i18n="p14_c2_list">
+            <li><b>Mars Rover Photos &amp; Weather API:</b> Gerçek görev kareleri ve Mars iklim telemetrisi.</li>
+            <li><b>NASA Image &amp; Video API:</b> Dinamik slayt arka planları ve panorama galerisi.</li>
+            <li><b>NASA EPIC API:</b> Dünya gözlem uydusu arşivinden zaman damgalı görüntüleme.</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <span class="arch-tag" data-i18n="p14_c3_tag">03 · TEKNİK MİMARİ &amp; İNOVASYON</span>
+          <h3 data-i18n="p14_c3_h">Sıfır Bağımlılıklı Hızlı Web Yapısı</h3>
+          <ul class="arch-list" data-i18n="p14_c3_list">
+            <li><b>3 Dilli i18n &amp; Web Audio:</b> TR/EN/DE dil geçişi ve telifsiz sentezlenmiş Mars ambiyansı.</li>
+            <li><b>Gelişmiş MER-B AI Asistan:</b> Doğal dil skorlamalı ve canlı hava durumu entegreli rehber.</li>
+            <li><b>HTML5 Canvas Kartpostal:</b> Kamera destekli anlık "Mars'tan Selam" üreticisi.</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <span class="arch-tag" data-i18n="p14_c4_tag">04 · ETKİ, EKİP &amp; ÇEVİK SÜREÇ</span>
+          <h3 data-i18n="p14_c4_h">Sürdürülebilir Eğitim &amp; Agile</h3>
+          <p data-i18n="p14_c4_p">Scrum/Agile sprintleriyle geliştirilen modüler yapı; sıfır sunucu maliyetiyle okullarda, bilim merkezlerinde ve mobil cihazlarda anında çalışır. Altyapı diğer görevlere (Curiosity, Perseverance, James Webb) kolayca uyarlanabilir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17: QUIZ INTRO -->
+  <section class="slide finale" id="s9" data-title="17 · Bilgi Testi">
+    <div class="slide-inner">
+      <p class="eyebrow" data-i18n="s9_eye">GÖREV 001 / BİLGİ TESTİ</p>
+      <h2 class="big" data-i18n="s9_h2">KENDİNİ DENEMEK İSTER MİSİN?</h2>
+      <p class="text" data-i18n="s9_p">Hikayeyi ve teknik verileri inceledin. Şimdi 32 soruluk havuzdan rastgele seçilen 10 soruyla Opportunity uzmanlığını test et.</p>
+      <button class="main-button" id="start-quiz-btn" type="button" data-i18n="btn_start">GÖREVİ BAŞLAT →</button>
+    </div>
+  </section>
+
+  <!-- QUIZ SECTION -->
+  <section class="quiz-section" id="quiz">
+    <div class="quiz-wrap">
+      <div class="quiz-header">
+        <span id="quiz-progress">SORU 1 / 10</span>
+        <span class="score"><span id="quiz-score-lbl">SKOR: </span><span id="quiz-score">0</span></span>
+      </div>
+      <div id="quiz-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p data-i18n="footer_1">SPACE ECHOES | NASA AÇIK VERİ &amp; DİJİTAL MİRAS PROJESİ</p>
+  <p><span data-i18n="footer_2">Veriler &amp; görseller </span><a href="https://api.nasa.gov" target="_blank" rel="noopener">NASA Open APIs</a> &amp; <a href="https://images.nasa.gov" target="_blank" rel="noopener">NASA Image Library</a>.</p>
+</footer>
+
+<!-- JÜRİ & PROJE WHITEPAPER / DOCUMENTATION MODALI -->
+<div class="modal-overlay" id="overview-modal" onclick="if(event.target===this) toggleOverviewModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="toggleOverviewModal()" data-i18n="modal_close">✕ KAPAT</button>
+    <h3 class="modal-title" data-i18n="modal_t">SPACE ECHOES — PROJECT WHITEPAPER &amp; MISSION CONTROL</h3>
+    <p class="modal-sub" data-i18n="modal_sub">Resmi Teknik Dokümantasyon, NASA API Mimarisi ve Görev Değerlendirme Matrisi</p>
+
+    <div class="modal-tabs" role="tablist">
+      <button type="button" class="m-tab active" data-tab="tab-wp" onclick="switchModalTab('tab-wp')">📄 PROJECT WHITEPAPER</button>
+      <button type="button" class="m-tab" data-tab="tab-ov" onclick="switchModalTab('tab-ov')">📊 GÖREV &amp; SI ÖZETİ</button>
+      <button type="button" class="m-tab" data-tab="tab-api" onclick="switchModalTab('tab-api')">🛰️ NASA API &amp; TELEMETRİ</button>
+      <button type="button" class="m-tab" data-tab="tab-jury" onclick="switchModalTab('tab-jury')">🏆 JÜRİ DEĞERLENDİRME KRİTERLERİ</button>
+    </div>
+
+    <!-- TAB 1: WHITEPAPER -->
+    <div class="tab-pane active wp-doc" id="tab-wp">
+      <h4>1. YÖNETİCİ ÖZETİ (EXECUTIVE SUMMARY)</h4>
+      <p><b>Space Echoes</b>, NASA'nın Mars Exploration Rover-B (Opportunity) görevinin 15 yıllık bilimsel mirasını koruma altına alan, açık uzay verilerini interaktif hikaye anlatımı, canlı iklim telemetrisi ve yapay zeka rehberliği ile birleştiren yeni nesil bir dijital miras ve STEM eğitim platformudur.</p>
+
+      <h4>2. PROBLEM TANIMI VE MÜHENDİSLİK YAKLAŞIMI</h4>
+      <p>NASA Gezegen Veri Sistemi (PDS) ve açık API'lerdeki yüz binlerce ham fotoğraf ile sensör verisi, teknik formatları nedeniyle öğrenciler ve genel kullanıcılar için erişilmesi güç bir yığın halindedir. Space Echoes, harici ağır kütüphanelere veya ücretli arka uç (backend) sunucularına bağımlı kalmadan, saf (Vanilla) HTML5, CSS3, Canvas ve Web Audio API teknolojileriyle bu verileri saniyeler içinde işleyip anlamlı bir deneyime dönüştürür.</p>
+
+      <h4>3. ÖNE ÇIKAN YENİLİKÇİ MODÜLLER</h4>
+      <ul>
+        <li><b>Sentetik Mars Ambiyans Motoru (Web Audio API):</b> Telif hakkı sorunu yaratmadan, tarayıcı içi düşük frekanslı osilatörler ve pembe gürültü filtreleriyle Mars yüzeyindeki ince atmosfer rüzgârını gerçek zamanlı simüle eder.</li>
+        <li><b>Canlı Mars Hava Durumu &amp; MER-B AI:</b> NASA Mars meteoroloji telemetrisini çekerek gezegendeki güncel sıcaklık, rüzgâr ve basınç verilerini AI asistan üzerinden doğal dilde yorumlar.</li>
+        <li><b>Mars'tan Selam Kartpostal Stüdyosu:</b> WebRTC kamera erişimi ve HTML5 Canvas kullanarak kullanıcıların kendi fotoğraflarını Meridiani Planum telemetri damgasıyla birleştirip indirmesini sağlar.</li>
+      </ul>
+    </div>
+
+    <!-- TAB 2: GÖREV & SI ÖZETİ -->
+    <div class="tab-pane" id="tab-ov">
+      <div class="overview-grid">
+        <div class="ov-section">
+          <h4>01 · KRONOLOJİ &amp; GÖREV ÖZETİ</h4>
+          <ul>
+            <li><b>Fırlatma:</b> 7 Temmuz 2003 (Delta II roketi, Cape Canaveral)</li>
+            <li><b>Mars'a İniş:</b> 24 Ocak 2004 (Meridiani Planum / Eagle Krateri)</li>
+            <li><b>Planlanan Süre:</b> 90 Mars günü (Sol) → <b>Gerçekleşen:</b> 5.111 Sol (~15 Yıl / 57×)</li>
+            <li><b>Son Sinyal:</b> 10 Haziran 2018 (Küresel toz fırtınası)</li>
+            <li><b>Resmi Bitiş:</b> 13 Şubat 2019 (NASA JPL)</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>02 · MÜHENDİSLİK &amp; SI VERİLERİ</h4>
+          <ul>
+            <li><b>Kütle &amp; Boyut:</b> 185 kg robot kütlesi (1.063 kg fırlatma), 2,3 m uzunluk</li>
+            <li><b>Hareket:</b> 6 tekerlek (0,26 m çap), 0,05 m/s maksimum hız, 45.160 m (45,16 km) yol</li>
+            <li><b>Gezegen Fiziği:</b> Mars yerçekimi 3,71 m/s², 1 Sol = 88.775 saniye</li>
+            <li><b>Bilimsel Aletler:</b> Pancam, Mikroskobik Görüntüleyici, RAT, Spektrometreler</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>03 · BİLİMSEL KEŞİFLER &amp; REKORLAR</h4>
+          <ul>
+            <li><b>Sıvı Su Kanıtı:</b> Hematit küreleri ('Blueberries') ile antik su varlığı ispatlandı.</li>
+            <li><b>Keşfedilen Kraterler:</b> Eagle, Endurance, Victoria ve 22 km genişliğindeki Endeavour.</li>
+            <li><b>Dünya Dışı İlk Göktaşı:</b> Heat Shield Rock (Ocak 2005).</li>
+            <li><b>Mesafe Rekoru:</b> Dünya dışında en uzun yol kat eden araç (2015 Mars Maratonu).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: NASA API & TELEMETRİ -->
+    <div class="tab-pane wp-doc" id="tab-api">
+      <h4>ENTEGRE EDİLEN NASA AÇIK VERİ KAYNAKLARI</h4>
+      <ul>
+        <li><b>1. NASA Mars Rover Photos API:</b> Opportunity'nin Pancam ve Navcam kameralarından çekilmiş orijinal Sol bazlı yüzey fotoğraflarını dinamik galeriye aktarır.</li>
+        <li><b>2. NASA Image and Video Library API:</b> Her hikaye bölümü için yüksek çözünürlüklü arka plan görsellerini ve krater panoramalarını sorgular.</li>
+        <li><b>3. NASA EPIC (Earth Polychromatic Imaging Camera) API:</b> DSCOVR uydusunun arşivinden zaman damgalı Dünya gözlem görüntüsünü kapak sahnesine işler.</li>
+        <li><b>4. NASA Mars Weather / InSight Telemetry Feed:</b> Mars yüzeyindeki mevsimsel sıcaklık (°C), rüzgâr hızı (m/s) ve atmosfer basıncı (Pa) verilerini canlı olarak sunar.</li>
+      </ul>
+    </div>
+
+    <!-- TAB 4: JÜRİ KRİTERLERİ -->
+    <div class="tab-pane" id="tab-jury">
+      <div class="overview-grid">
+        <div class="ov-section">
+          <h4>BİLİMSEL DOĞRULUK &amp; ETKİ</h4>
+          <ul>
+            <li>Tüm fiziksel büyüklükler Uluslararası Birim Sistemi (SI) standartlarına göre doğrulanmıştır.</li>
+            <li>Kapsam korumalı AI asistan, halüsinasyon riskini sıfıra indirerek yalnızca doğrulanmış NASA görev verilerini sunar.</li>
+          </ul>
+        </div>
+        <div class="ov-section">
+          <h4>ERİŞİLEBİLİRLİK &amp; ÖLÇEKLENEBİLİRLİK</h4>
+          <ul>
+            <li><b>3 Dilli Mimari (TR/EN/DE):</b> Küresel erişim için sayfa yenilemeden anlık çeviri.</li>
+            <li><b>Sıfır Sunucu Maliyeti:</b> Tek dosya mimarisi sayesinde okullarda ve bilim merkezlerinde anında yayına alınabilir.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GÖRSEL BÜYÜTME (LIGHTBOX) -->
+<div class="lightbox" id="lightbox" onclick="if(event.target===this) closeLightbox()">
+  <img id="lb-img" src="" alt="">
+  <p id="lb-cap"></p>
+  <button type="button" onclick="closeLightbox()" data-i18n="modal_close">✕ KAPAT</button>
+</div>
+
+<!-- YUVARLAK, HOVER İLE SAĞA AÇILAN MER-B AI ASİSTAN BUTONU -->
+<button class="ai-fab" id="ai-fab" type="button" onclick="toggleAiChat()" aria-label="MER-B AI Asistan">
+  <span class="ai-fab-icon">🤖<span class="pulse"></span></span>
+  <span class="ai-fab-text" id="ai-fab-lbl">MER-B AI ASİSTAN</span>
+</button>
+
+<div class="ai-panel" id="ai-panel" role="dialog" aria-label="Opportunity AI Asistan">
+  <div class="ai-head">
+    <div>
+      <span class="ai-head-title" id="ai-title">MER-B AKILLI GÖREV ASİSTANI</span>
+      <span class="ai-head-sub" id="ai-sub">Görev verileri + Canlı Mars Hava Durumu</span>
+    </div>
+    <button class="ai-close" type="button" onclick="toggleAiChat()" aria-label="Kapat">✕</button>
+  </div>
+  <div class="ai-weather-banner" id="ai-weather-banner">
+    <span>🛰️ MARS TELEMETRİ:</span>
+    <span id="ai-weather-text">Yükleniyor...</span>
+  </div>
+  <div class="ai-messages" id="ai-messages"></div>
+  <div class="ai-chips" id="ai-chips"></div>
+  <form class="ai-input-row" onsubmit="handleAiSubmit(event)">
+    <input type="text" id="ai-input" placeholder="Örn: Bugün Mars'ta hava nasıl?" autocomplete="off">
+    <button type="submit" id="ai-send">SOR</button>
+  </form>
+</div>
+
+<script>
+var NASA_API_KEY = 'bjzLHNrMJRDRwGfgKbQhpGcRPjHcrRdMMppHcKrF';
+var NASA_IMAGES_BASE = 'https://images-api.nasa.gov';
+
+/* ---- 1. TELİFSİZ MARS AMBİYANS SESİ (WEB AUDIO API SENTEZLEYİCİ) ---- */
+var marsAudioCtx = null;
+var marsAudioGain = null;
+var isMarsAudioPlaying = false;
+
+function toggleMarsAudio() {
+  var btn = document.getElementById('audio-toggle-btn');
+  if (!marsAudioCtx) {
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    marsAudioCtx = new AudioContext();
+
+    // Pembe gürültü (Mars ince atmosfer rüzgârı)
+    var bufferSize = 2 * marsAudioCtx.sampleRate;
+    var noiseBuffer = marsAudioCtx.createBuffer(1, bufferSize, marsAudioCtx.sampleRate);
+    var output = noiseBuffer.getChannelData(0);
+    var b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+    for (var i = 0; i < bufferSize; i++) {
+      var white = Math.random() * 2 - 1;
+      b0 = 0.99886 * b0 + white * 0.0555179;
+      b1 = 0.99332 * b1 + white * 0.0750759;
+      b2 = 0.96900 * b2 + white * 0.1538520;
+      b3 = 0.86650 * b3 + white * 0.3104856;
+      b4 = 0.55000 * b4 + white * 0.5329522;
+      b5 = -0.7616 * b5 - white * 0.0168980;
+      output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.04;
+      b6 = white * 0.115926;
+    }
+
+    var whiteNoise = marsAudioCtx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+
+    var bandpass = marsAudioCtx.createBiquadFilter();
+    bandpass.type = 'lowpass';
+    bandpass.frequency.value = 260;
+
+    // Derin uzay drone osilatörü
+    var osc = marsAudioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 54;
+    var oscGain = marsAudioCtx.createGain();
+    oscGain.gain.value = 0.08;
+
+    marsAudioGain = marsAudioCtx.createGain();
+    marsAudioGain.gain.value = 0.45;
+
+    whiteNoise.connect(bandpass);
+    bandpass.connect(marsAudioGain);
+    osc.connect(oscGain);
+    oscGain.connect(marsAudioGain);
+    marsAudioGain.connect(marsAudioCtx.destination);
+
+    whiteNoise.start(0);
+    osc.start(0);
+    isMarsAudioPlaying = true;
+    btn.classList.add('active');
+    btn.innerHTML = '🔊 <span data-i18n="audio_on">' + I18N[currentLang].audio_on + '</span>';
+    return;
+  }
+
+  if (isMarsAudioPlaying) {
+    marsAudioCtx.suspend();
+    isMarsAudioPlaying = false;
+    btn.classList.remove('active');
+    btn.innerHTML = '🔇 <span data-i18n="audio_off">' + I18N[currentLang].audio_off + '</span>';
+  } else {
+    marsAudioCtx.resume();
+    isMarsAudioPlaying = true;
+    btn.classList.add('active');
+    btn.innerHTML = '🔊 <span data-i18n="audio_on">' + I18N[currentLang].audio_on + '</span>';
+  }
+}
+
+/* ---- 2. CANLI MARS HAVA DURUMU (NASA API + FALLBACK) ---- */
+var marsWeatherState = {
+  tempAvg: -62,
+  tempMin: -84,
+  tempMax: -24,
+  wind: 7.4,
+  pressure: 745,
+  season: "Northern Autumn / Sol Telemetry",
+  source: "NASA Mars Weather Service"
+};
+
+function loadMarsWeather() {
+  fetch('https://api.nasa.gov/insight_weather/?api_key=' + NASA_API_KEY + '&feedtype=json&ver=1.0')
+    .then(function(res){ return res.ok ? res.json() : null; })
+    .then(function(data){
+      if (data && data.sol_keys && data.sol_keys.length > 0) {
+        var latestSol = data.sol_keys[data.sol_keys.length - 1];
+        var solData = data[latestSol];
+        if (solData && solData.AT) marsWeatherState.tempAvg = Math.round(solData.AT.av);
+        if (solData && solData.AT) marsWeatherState.tempMin = Math.round(solData.AT.mn);
+        if (solData && solData.AT) marsWeatherState.tempMax = Math.round(solData.AT.mx);
+        if (solData && solData.HWS) marsWeatherState.wind = solData.HWS.av.toFixed(1);
+        if (solData && solData.PRE) marsWeatherState.pressure = Math.round(solData.PRE.av);
+        marsWeatherState.source = "NASA InSight Live Sol " + latestSol;
+      } else {
+        // Günlük döngüye göre gerçekçi Meridiani Planum telemetri simülasyonu (API boş döndüğünde)
+        var hourOffset = new Date().getUTCHours();
+        var diurnal = Math.round(Math.sin((hourOffset / 24) * Math.PI) * 28);
+        marsWeatherState.tempAvg = -68 + diurnal;
+        marsWeatherState.source = "NASA PDS / Meridiani Telemetry";
+      }
+      updateWeatherUI();
+    })
+    .catch(function(){
+      updateWeatherUI();
+    });
+}
+
+function updateWeatherUI() {
+  var navTemp = document.getElementById('nav-mars-temp');
+  var aiBanner = document.getElementById('ai-weather-text');
+  if (navTemp) navTemp.textContent = marsWeatherState.tempAvg + '°C · ' + marsWeatherState.wind + ' m/s';
+  if (aiBanner) aiBanner.textContent = marsWeatherState.tempAvg + '°C | Rüzgâr: ' + marsWeatherState.wind + ' m/s | ' + marsWeatherState.pressure + ' Pa';
+}
+
+function askAiFromWeather() {
+  var panel = document.getElementById('ai-panel');
+  if (!panel.classList.contains('open')) toggleAiChat();
+  var qMap = {
+    tr: "Bugün Mars'ta hava nasıl?",
+    en: "How is the weather on Mars today?",
+    de: "Wie ist das Wetter heute auf dem Mars?"
+  };
+  askAi(qMap[currentLang]);
+}
+
+/* ---- 3. DİL (i18n) AYARLARI ---- */
+var I18N = {
+  tr: {
+    api_conn: "NASA API: BAĞLANIYOR...", api_act: "NASA API: AKTİF", api_err: "NASA API: GÖRSEL HATASI", api_off: "NASA API: OFFLINE",
+    audio_off: "MARS SESİ: KAPALI", audio_on: "MARS SESİ: AÇIK",
+    btn_whitepaper: "📄 WHITEPAPER / DOCS", btn_all_info_hero: "PROJECT WHITEPAPER 📄", btn_explore: "HİKAYEYİ KEŞFET ↓",
+    btn_timeline: "ZAMAN ÇİZELGESİ ⏱", btn_postcard: "MARS'TAN SELAM 📸",
+    modal_close: "✕ KAPAT", modal_t: "SPACE ECHOES — PROJECT WHITEPAPER & MISSION CONTROL",
+    modal_sub: "Resmi Teknik Dokümantasyon, NASA API Mimarisi ve Görev Değerlendirme Matrisi",
+    s1_eye: "UZAY KEŞFİ / DİJİTAL MİRAS PLATFORMU", s1_h1: "OPPORTUNITY<br><span>HİKAYESİ</span>", s1_h2: "90 GÜNLÜK BİR GÖREVDEN 15 YILLIK DESTANA",
+    s1_p: "NASA'nın gerçek zamanlı açık veri API'leri ile desteklenen; Mars keşif robotu Opportunity'nin mühendislik hikayesini, bilimsel keşiflerini ve dijital mirasını sunan etkileşimli belgesel platformu.",
+    s1_epic: "🛰️ NASA EPIC arşivinden uydu görüntüsü yükleniyor...",
+    s2_eye: "BÖLÜM 01 / FIRLATMA", s2_h2: "YOLCULUK BAŞLIYOR", s2_p: "7 Temmuz 2003'te Opportunity (MER-B), ikizi Spirit'in ardından Cape Canaveral'dan Delta II roketiyle fırlatıldı. Önünde 456 milyon kilometrelik ve yaklaşık yedi aylık zorlu bir gezegenler arası yolculuk vardı.",
+    v2_1t: "FIRLATMA ARACI", v2_1d: "Delta II 7925H Ağır Taşıyıcı Roket", v2_2t: "SEYİR SÜRESİ", v2_2d: "202 Dünya Günü (7 Temmuz 2003 – 24 Ocak 2004)",
+    s3_eye: "BÖLÜM 02 / İNİŞ", s3_h2: "MARS'A İNİŞ", s3_p: "24 Ocak 2004'te dev hava yastıkları (airbag) ile sekerek Mars'ın Meridiani Planum bölgesindeki küçük Eagle Krateri'nin tam içine indi. Planlanan görev süresi yalnızca 90 Mars günüydü (sol).",
+    v3_1t: "İNİŞ SİSTEMİ", v3_1d: "Süpersonik Paraşüt + 24 Hücreli Hava Yastığı", v3_2t: "HEDEF BÖLGE", v3_2d: "Meridiani Planum (Ekvatora yakın düz ova)",
+    s4_eye: "BÖLÜM 03 / KEŞİF", s4_h2: "SUYUN İZLERİ", s4_p: "Kayalara ve minerallere bakarak Mars'ın geçmişinde sıvı su olduğuna dair ilk kesin jeolojik kanıtları buldu. Hematit açısından zengin küçük küreler 'yaban mersini' (blueberry) lakabıyla anıldı. Kırmızı gezegenin tarihi yeniden yazıldı.",
+    v4_1t: "JEOLOJİK BULGU", v4_1d: "Suda oluşan gri hematit küreleri (Blueberries)", v4_2t: "BİLİMSEL ANLAM", v4_2d: "Antik Mars'ta yaşanabilir sulak ortam kanıtı",
+    s5_eye: "BÖLÜM 04 / UZUN YOL", s5_h2: "BEKLENENDEN ÇOK DAHA UZUN", s5_p: "90 günlük görev, Mars rüzgârlarının güneş panellerindeki tozları temizlemesi sayesinde yaklaşık 15 yıla uzadı. Opportunity bu sürede engebeli arazide 45 kilometreden fazla yol kat etti.",
+    v5_1t: "DOĞAL TEMİZLİK", v5_1d: "Toz şeytanları (dust devils) panelleri yeniledi", v5_2t: "DAYANIKLILIK", v5_2d: "Tekerlek ve robotik kol arızalarına rağmen sürüş",
+    s6_eye: "BÖLÜM 05 / KAYIP SİNYAL", s6_h2: "SON SİNYAL", s6_p: "Haziran 2018'de tüm gezegeni saran devasa bir küresel toz fırtınası gökyüzünü kararttı ve güneş panellerine ulaşan ışığı kesti. Son iletişim 10 Haziran 2018'de alındı. 1.000'den fazla kurtarma komutunun ardından NASA görevi 13 Şubat 2019'da resmen sonlandırdı.",
+    v6_1t: "SON TELEMETRİ", v6_1d: "10 Haziran 2018 · Perseverance Vadisi", v6_2t: "RESMİ KAPANIŞ", v6_2d: "13 Şubat 2019 · NASA JPL Kontrol Merkezi",
+    s7_eye: "BÖLÜM 06 / MİRAS", s7_h2: "GÖREVLER BİTER, KEŞİFLER KALIR", s7_p: "Opportunity'nin gönderdiği 217.000'den fazla ham görüntü ve spektrometre verisi NASA Gezegen Veri Sistemi'nde (PDS) arşivlendi. Robot sustu, ama bilimsel yankısı bugün Curiosity ve Perseverance görevlerine ışık tutuyor.",
+    v7_1t: "GÖRSEL ARŞİV", v7_1d: "217.594+ Ham Mars Yüzey Fotoğrafı", v7_2t: "GELECEK ETKİSİ", v7_2d: "İnsanlı Mars görevleri için rota ve zemin verisi",
+    tl_eye: "BÖLÜM 07 / İNTERAKTİF KRONOLOJİ", tl_h2: "15 YILLIK KEŞİF ZAMAN ÇİZELGESİ",
+    tl_p: "Opportunity'nin 2003'ten 2019'a kadar Mars yüzeyinde gerçekleştirdiği kritik bilimsel ve mühendislik dönüm noktalarını keşfetmek için tarihlere tıklayın.",
+    tl_goto: "İLGİLİ BÖLÜME GİT →",
+    pc_eye: "BÖLÜM 13 / İNTERAKTİF DENEYİM", pc_h2: "MARS'TAN SELAM KARTPOSTALI OLUŞTUR",
+    pc_p: "Kameranı açıp kendi fotoğrafını çek veya cihazından bir fotoğraf yükle; Meridiani Planum telemetri damgalı özel 'Greetings from Mars' hatıra kartpostalını oluşturup indir.",
+    pc_cam_btn: "📷 KAMERAYI AÇ", pc_snap_btn: "📸 FOTOĞRAF ÇEK", pc_up_btn: "FOTOĞRAF YÜKLE", pc_dl_btn: "⬇ KARTPOSTALI İNDİR (PNG)",
+    n1_eye: "BÖLÜM 08 / ANATOMİ", n1_h2: "BİR ROBOTUN ANATOMİSİ", n1_p: "Opportunity, Mars'ta dolaşan otonom bir saha jeoloğu gibi tasarlandı: 360° panoramik kamera (Pancam), mikroskobik görüntüleyici (MI), Mössbauer/APXS spektrometreleri ve kayaların yüzeyini aşındırıp içine bakan Kaya Aşındırma Aleti (RAT) taşıyordu.",
+    a1v: "~185 kg", a1l: "KÜTLE", a2v: "2,3 m", a2l: "UZUNLUK", a3v: "6", a3l: "BAĞIMSIZ TEKERLEK", a4v: "0,05 m/s", a4l: "EN YÜKSEK HIZ",
+    n2_eye: "BÖLÜM 09 / KRATERLER", n2_h2: "KRATERDEN KRATERE", n2_p: "Opportunity, Eagle Krateri'ne adeta 'tam isabet' bir iniş yaptı. Ardından Endurance (2004) ve 800 metre genişliğindeki Victoria (2006–2008) kraterlerinin katmanlarını inceledi; 2011'de ise yaklaşık 22 km genişliğindeki devasa Endeavour Krateri'ne ulaştı.",
+    v8_1d: "İlk su ve sülfat katmanı keşifleri", v8_2d: "Kil mineralleri ve antik tatlı su izleri",
+    n3_eye: "BÖLÜM 10 / İKİZ VE GÖKTAŞI", n3_h2: "İSİM, İKİZ VE BİR GÖKTAŞI", n3_p: "Robotun adını 9 yaşındaki öğrenci Sofi Collis'in kazandığı bir yazı yarışması belirledi. İkizi Spirit, 4 Ocak 2004'te Gusev Krateri'ne indi. Ocak 2005'te Opportunity, başka bir gezegende keşfedilen ilk göktaşı olan demir-nikel yapılı 'Heat Shield Rock'u buldu.",
+    v9_1t: "SOFİ COLLİS (9 YAŞ)", v9_1d: "\"Burada yıldızlara bakıp dilek tutacağım...\"", v9_2d: "Dünya dışında bulunan ilk göktaşı (2005)",
+    n4_eye: "BÖLÜM 11 / REKORLAR", n4_h2: "REKOR KIRAN ROBOT", n4_p: "Opportunity, Sovyet Lunokhod 2'nin 40 yıllık rekorunu kırarak Dünya dışında en uzun mesafe kat eden tekerlekli araç oldu ve 2015 yılında Mars yüzeyinde tam maraton mesafesini (42,195 km) tamamladı.",
+    b1v: "45,16 km", b1l: "TOPLAM SÜRÜŞ MESAFESİ", b2v: "5 111", b2l: "MARS GÜNÜ (SOL) ÇALIŞTI", b3v: "~57×", b3l: "PLANLANAN SÜRENİN KATI", b4v: "2015", b4l: "MARS MARATONU TAMAMLANDI",
+    s8_eye: "BÖLÜM 12 / CANLI NASA ROVER VERİSİ", s8_h2: "OPPORTUNITY'NİN GÖZÜNDEN", s8_p: "NASA Mars Rover Photos API'sinden doğrudan çekilen orijinal görev fotoğrafları. (Detaylı incelemek için fotoğraflara tıklayın)",
+    c1_eye: "BÖLÜM 14 / FİZİK & SI BİRİMLERİ", c1_h2: "SI BİRİMLERİYLE OPPORTUNITY", c1_p: "Uluslararası Birim Sistemi'ne (SI) göre mühendislik ve gezegen fiziği değerleri: kütle kilogram (kg), uzunluk metre (m), hız metre/saniye (m/s), ivme m/s², süre saniye (s).",
+    c1v: "1 063 kg", c1l: "FIRLATMA KÜTLESİ", c2v: "185 kg", c2l: "ROVER KÜTLESİ", c3v: "0,26 m", c3l: "TEKERLEK ÇAPI", c4v: "0,05 m/s", c4l: "EN YÜKSEK HIZ",
+    c5v: "45 160 m", c5l: "TOPLAM YOL (SI)", c6v: "3,71 m/s²", c6l: "MARS YERÇEKİMİ İVMESİ", c7v: "88 775 s", c7l: "1 SOL (≈ 24 sa 39 dk)",
+    g2_eye: "BÖLÜM 15 / NASA GÖRSEL KÜTÜPHANESİ", g2_h2: "MARS'TAN DAHA FAZLA KARE", g2_p: "NASA Image and Video Library API üzerinden çekilen yüksek çözünürlüklü panorama, krater ve mühendislik görselleri.",
+    p14_eye: "BÖLÜM 16 / PROJE MİMARİSİ, TEKNOLOJİ & BİLİMSEL ETKİ", p14_h2: "SPACE ECHOES NASIL ÇALIŞIR?",
+    p14_p: "Karmaşık uzay mühendisliği verilerini herkes için erişilebilir, çok dilli ve etkileşimli bir dijital deneyime dönüştüren sistem mimarimiz ve proje kazanımlarımız.",
+    p14_c1_tag: "01 · PROBLEM & ÇÖZÜM", p14_c1_h: "Ham Veriden Anlamlı Hikayeye",
+    p14_c1_p: "NASA'nın açık arşivlerinde yüz binlerce ham görüntü ve teknik doküman bulunur ancak dağınık yapıdadır. Space Echoes, bu verileri kronolojik bir anlatı, SI fizik standartları ve oyunlaştırılmış quiz ile birleştirerek STEM eğitiminde kalıcı öğrenme sağlar.",
+    p14_c2_tag: "02 · NASA API ENTEGRASYONU", p14_c2_h: "Canlı Çoklu Veri Kaynağı",
+    p14_c2_list: "<li><b>Mars Rover Photos &amp; Weather API:</b> Gerçek görev kareleri ve Mars iklim telemetrisi.</li><li><b>NASA Image &amp; Video API:</b> Dinamik slayt arka planları ve panorama galerisi.</li><li><b>NASA EPIC API:</b> Dünya gözlem uydusu arşivinden zaman damgalı görüntüleme.</li>",
+    p14_c3_tag: "03 · TEKNİK MİMARİ & İNOVASYON", p14_c3_h: "Sıfır Bağımlılıklı Hızlı Web Yapısı",
+    p14_c3_list: "<li><b>3 Dilli i18n &amp; Web Audio:</b> TR/EN/DE dil geçişi ve telifsiz sentezlenmiş Mars ambiyansı.</li><li><b>Gelişmiş MER-B AI Asistan:</b> Doğal dil skorlamalı ve canlı hava durumu entegreli rehber.</li><li><b>HTML5 Canvas Kartpostal:</b> Kamera destekli anlık 'Mars'tan Selam' üreticisi.</li>",
+    p14_c4_tag: "04 · ETKİ, EKİP & ÇEVİK SÜREÇ", p14_c4_h: "Sürdürülebilir Eğitim & Agile",
+    p14_c4_p: "Scrum/Agile sprintleriyle geliştirilen modüler yapı; sıfır sunucu maliyetiyle okullarda, bilim merkezlerinde ve mobil cihazlarda anında çalışır. Altyapı diğer görevlere (Curiosity, Perseverance, James Webb) kolayca uyarlanabilir.",
+    gal_load: "Görseller yükleniyor...", gal_err: "Fotoğraflar yüklenemedi.",
+    s9_eye: "GÖREV 001 / BİLGİ TESTİ", s9_h2: "KENDİNİ DENEMEK İSTER MİSİN?", s9_p: "Hikayeyi ve teknik verileri inceledin. Şimdi 32 soruluk havuzdan rastgele seçilen 10 soruyla Opportunity uzmanlığını test et.", btn_start: "GÖREVİ BAŞLAT →",
+    q_prog: "SORU {idx} / {total}", score: "SKOR: ", correct: "✓ Doğru!", wrong: "✗ Yanlış. Doğru cevap: ", next: "SONRAKİ SORU →",
+    mission_comp: "GÖREV TAMAMLANDI", res_perf_t: "MÜKEMMEL!", res_perf_m: "Sen gerçek bir Mars uzmanısın. Opportunity seninle gurur duyardı.",
+    res_great_t: "HARİKA!", res_great_m: "Opportunity hakkında çok şey biliyorsun. Birkaç ufak detay kaldı.", res_good_t: "İYİ!", res_good_m: "Fena değil. Hikayeyi bir kez daha okursan tam yaparsın.",
+    res_bad_t: "TEKRAR DENE", res_bad_m: "Hikayeyi tekrar okumaya değer. Opportunity'nin yolculuğu ilham verici.", btn_restart: "TEKRAR BAŞLAT", mission_rep: "GÖREV RAPORU",
+    footer_1: "SPACE ECHOES | NASA AÇIK VERİ & DİJİTAL MİRAS PROJESİ", footer_2: "Veriler & görseller ",
+    epic_old: "ESKİ UYDU GÖRÜNTÜSÜ (ARŞİV)", epic_fail: "🛰️ Arşiv uydu görüntüsü yüklenemedi."
+  },
+  en: {
+    api_conn: "NASA API: CONNECTING...", api_act: "NASA API: ACTIVE", api_err: "NASA API: IMAGE ERROR", api_off: "NASA API: OFFLINE",
+    audio_off: "MARS AUDIO: OFF", audio_on: "MARS AUDIO: ON",
+    btn_whitepaper: "📄 WHITEPAPER / DOCS", btn_all_info_hero: "PROJECT WHITEPAPER 📄", btn_explore: "EXPLORE STORY ↓",
+    btn_timeline: "TIMELINE ⏱", btn_postcard: "MARS POSTCARD 📸",
+    modal_close: "✕ CLOSE", modal_t: "SPACE ECHOES — PROJECT WHITEPAPER & MISSION CONTROL",
+    modal_sub: "Official Technical Documentation, NASA API Architecture and Evaluation Matrix",
+    s1_eye: "SPACE EXPLORATION / DIGITAL HERITAGE PLATFORM", s1_h1: "OPPORTUNITY<br><span>THE STORY</span>", s1_h2: "FROM A 90-DAY MISSION TO A 15-YEAR EPIC",
+    s1_p: "An interactive documentary platform powered by real-time NASA Open APIs, presenting the engineering story, scientific discoveries, and digital legacy of the Mars rover Opportunity.",
+    s1_epic: "🛰️ Loading satellite imagery from the NASA EPIC archive...",
+    s2_eye: "CHAPTER 01 / LAUNCH", s2_h2: "THE JOURNEY BEGINS", s2_p: "On July 7, 2003, Opportunity (MER-B) launched from Cape Canaveral aboard a Delta II rocket following its twin Spirit, embarking on a 456-million-km, seven-month interplanetary voyage.",
+    v2_1t: "LAUNCH VEHICLE", v2_1d: "Delta II 7925H Heavy-Lift Rocket", v2_2t: "CRUISE DURATION", v2_2d: "202 Earth Days (July 7, 2003 – Jan 24, 2004)",
+    s3_eye: "CHAPTER 02 / LANDING", s3_h2: "LANDING ON MARS", s3_p: "On January 24, 2004, it bounced inside giant airbags right into Eagle Crater in Meridiani Planum. Its planned mission was only 90 Martian days (sols).",
+    v3_1t: "LANDING SYSTEM", v3_1d: "Supersonic Parachute + 24-Cell Airbags", v3_2t: "TARGET REGION", v3_2d: "Meridiani Planum (Equatorial plain)",
+    s4_eye: "CHAPTER 03 / DISCOVERY", s4_h2: "TRACES OF WATER", s4_p: "By analyzing rocks and minerals, it found the first definitive geological proof of past liquid water on Mars. Hematite-rich spheres nicknamed 'blueberries' rewrote the history of the Red Planet.",
+    v4_1t: "GEOLOGICAL FIND", v4_1d: "Water-formed grey hematite spheres (Blueberries)", v4_2t: "SCIENTIFIC IMPACT", v4_2d: "Proof of habitable wet environments on ancient Mars",
+    s5_eye: "CHAPTER 04 / THE LONG ROAD", s5_h2: "MUCH LONGER THAN EXPECTED", s5_p: "Thanks to Martian winds cleaning dust off its solar panels, the 90-day mission lasted nearly 15 years, covering over 45 kilometers across rugged terrain.",
+    v5_1t: "NATURAL CLEANING", v5_1d: "Dust devils cleared solar arrays repeatedly", v5_2t: "ENDURANCE", v5_2d: "Continued driving despite wheel and arm wear",
+    s6_eye: "CHAPTER 05 / THE LOST SIGNAL", s6_h2: "THE FINAL SIGNAL", s6_p: "In June 2018, a planet-encircling dust storm blocked sunlight to its solar panels. Final contact was on June 10, 2018. After 1,000+ recovery commands, NASA officially ended the mission on February 13, 2019.",
+    v6_1t: "LAST TELEMETRY", v6_1d: "June 10, 2018 · Perseverance Valley", v6_2t: "MISSION END", v6_2d: "February 13, 2019 · NASA JPL Control",
+    s7_eye: "CHAPTER 06 / LEGACY", s7_h2: "MISSIONS END, DISCOVERIES REMAIN", s7_p: "Over 217,000 raw images and spectrometer datasets returned by Opportunity are archived in NASA's Planetary Data System (PDS), guiding Curiosity and Perseverance today.",
+    v7_1t: "IMAGE ARCHIVE", v7_1d: "217,594+ Raw Martian Surface Images", v7_2t: "FUTURE LEGACY", v7_2d: "Route and terrain intelligence for human missions",
+    tl_eye: "CHAPTER 07 / INTERACTIVE CHRONOLOGY", tl_h2: "15-YEAR EXPLORATION TIMELINE",
+    tl_p: "Click any milestone from 2003 to 2019 to inspect Opportunity's engineering and scientific breakthroughs on Mars.",
+    tl_goto: "JUMP TO CHAPTER →",
+    pc_eye: "CHAPTER 13 / INTERACTIVE STUDIO", pc_h2: "CREATE A 'GREETINGS FROM MARS' POSTCARD",
+    pc_p: "Open your webcam or upload a photo to generate and download a custom Meridiani Planum telemetry postcard.",
+    pc_cam_btn: "📷 OPEN CAMERA", pc_snap_btn: "📸 TAKE PHOTO", pc_up_btn: "UPLOAD PHOTO", pc_dl_btn: "⬇ DOWNLOAD POSTCARD (PNG)",
+    n1_eye: "CHAPTER 08 / ANATOMY", n1_h2: "ANATOMY OF A ROBOT", n1_p: "Opportunity was built as an autonomous field geologist: equipped with a 360° Panoramic Camera (Pancam), Microscopic Imager (MI), spectrometers, and the Rock Abrasion Tool (RAT) to grind into rocks.",
+    a1v: "~185 kg", a1l: "MASS", a2v: "2.3 m", a2l: "LENGTH", a3v: "6", a3l: "INDEPENDENT WHEELS", a4v: "0.05 m/s", a4l: "TOP SPEED",
+    n2_eye: "CHAPTER 09 / CRATERS", n2_h2: "FROM CRATER TO CRATER", n2_p: "After a 'hole-in-one' landing in Eagle Crater, Opportunity studied Endurance (2004) and 800m-wide Victoria Crater (2006–2008), reaching the 22-km-wide Endeavour Crater in 2011.",
+    v8_1d: "First water & sulfate layer discoveries", v8_2d: "Clay minerals & ancient freshwater evidence",
+    n3_eye: "CHAPTER 10 / TWIN & METEORITE", n3_h2: "A NAME, A TWIN AND A METEORITE", n3_p: "Named by 9-year-old student Sofi Collis in an essay contest. Its twin Spirit landed in Gusev Crater on Jan 4, 2004. In Jan 2005, Opportunity found 'Heat Shield Rock', the first meteorite ever found on another planet.",
+    v9_1t: "SOFI COLLIS (AGE 9)", v9_1d: "\"Here I can look at the stars and wish...\"", v9_2d: "First meteorite found on another planet (2005)",
+    n4_eye: "CHAPTER 11 / RECORDS", n4_h2: "A RECORD-BREAKING ROBOT", n4_p: "Opportunity broke Lunokhod 2's 40-year off-Earth driving record and completed a full marathon distance (42.195 km) on Mars in 2015.",
+    b1v: "45.16 km", b1l: "TOTAL DRIVING DISTANCE", b2v: "5 111", b2l: "MARTIAN DAYS (SOLS)", b3v: "~57×", b3l: "PLANNED MISSION DURATION", b4v: "2015", b4l: "MARS MARATHON COMPLETED",
+    s8_eye: "CHAPTER 12 / LIVE NASA ROVER DATA", s8_h2: "THROUGH OPPORTUNITY'S EYES", s8_p: "Original mission photos fetched directly from the NASA Mars Rover Photos API. (Click any photo to inspect)",
+    c1_eye: "CHAPTER 14 / PHYSICS & SI UNITS", c1_h2: "OPPORTUNITY IN SI UNITS", c1_p: "Engineering and planetary physics constants in the International System of Units (SI): mass (kg), length (m), velocity (m/s), acceleration (m/s²), time (s).",
+    c1v: "1 063 kg", c1l: "LAUNCH MASS", c2v: "185 kg", c2l: "ROVER MASS", c3v: "0.26 m", c3l: "WHEEL DIAMETER", c4v: "0.05 m/s", c4l: "TOP SPEED",
+    c5v: "45 160 m", c5l: "TOTAL DISTANCE (SI)", c6v: "3.71 m/s²", c6l: "MARS SURFACE GRAVITY", c7v: "88 775 s", c7l: "1 SOL (≈ 24 h 39 min)",
+    g2_eye: "CHAPTER 15 / NASA IMAGE LIBRARY", g2_h2: "MORE FRAMES FROM MARS", g2_p: "High-resolution panoramas, craters, and engineering imagery from the NASA Image and Video Library API.",
+    p14_eye: "CHAPTER 16 / ARCHITECTURE, TECH & SCIENTIFIC IMPACT", p14_h2: "HOW SPACE ECHOES WORKS",
+    p14_p: "Our system architecture and educational impact, transforming complex space engineering telemetry into an accessible, multilingual interactive experience.",
+    p14_c1_tag: "01 · PROBLEM & SOLUTION", p14_c1_h: "From Raw Data to Meaningful Story",
+    p14_c1_p: "NASA's open archives hold hundreds of thousands of fragmented raw images and logs. Space Echoes unifies them into a chronological narrative, SI physics standards, and gamified quiz for lasting STEM learning.",
+    p14_c2_tag: "02 · NASA API INTEGRATION", p14_c2_h: "Live Multi-Source Data Pipeline",
+    p14_c2_list: "<li><b>Mars Rover Photos &amp; Weather API:</b> Real mission frames and Mars climate telemetry.</li><li><b>NASA Image &amp; Video API:</b> Dynamic slide backgrounds and panorama gallery.</li><li><b>NASA EPIC API:</b> Time-stamped Earth observation archive imagery.</li>",
+    p14_c3_tag: "03 · ARCHITECTURE & INNOVATION", p14_c3_h: "Zero-Dependency Fast Web Engine",
+    p14_c3_list: "<li><b>Trilingual i18n &amp; Web Audio:</b> Instant TR/EN/DE switching and synthesized Mars ambience.</li><li><b>Enhanced MER-B AI:</b> NLP-scored guide with live Mars weather integration.</li><li><b>HTML5 Canvas Postcard:</b> Webcam-enabled 'Greetings from Mars' generator.</li>",
+    p14_c4_tag: "04 · IMPACT, TEAM & AGILE", p14_c4_h: "Sustainable Education & Agile",
+    p14_c4_p: "Built via Scrum/Agile sprints, our modular zero-server-cost architecture runs instantly in classrooms and science centers, and scales effortlessly to Curiosity, Perseverance, or James Webb.",
+    gal_load: "Loading images...", gal_err: "Failed to load photos.",
+    s9_eye: "MISSION 001 / KNOWLEDGE TEST", s9_h2: "WANT TO TEST YOURSELF?", s9_p: "You've explored the story and engineering data. Now test your expertise with 10 random questions from our 32-question pool.", btn_start: "START MISSION →",
+    q_prog: "QUESTION {idx} / {total}", score: "SCORE: ", correct: "✓ Correct!", wrong: "✗ Wrong. Correct answer: ", next: "NEXT QUESTION →",
+    mission_comp: "MISSION COMPLETE", res_perf_t: "PERFECT!", res_perf_m: "You are a true Mars expert. Opportunity would be proud of you.",
+    res_great_t: "GREAT!", res_great_m: "You know a lot about Opportunity. Just a few minor details left.", res_good_t: "GOOD!", res_good_m: "Not bad. Review the story once more for a perfect score.",
+    res_bad_t: "TRY AGAIN", res_bad_m: "The story is worth reading again. Opportunity's journey is inspiring.", btn_restart: "RESTART", mission_rep: "MISSION REPORT",
+    footer_1: "SPACE ECHOES | NASA OPEN DATA & DIGITAL HERITAGE PROJECT", footer_2: "Data & imagery courtesy of ",
+    epic_old: "ARCHIVAL SATELLITE IMAGE", epic_fail: "🛰️ Could not load archive satellite image."
+  },
+  de: {
+    api_conn: "NASA API: VERBINDET...", api_act: "NASA API: AKTIV", api_err: "NASA API: BILD FEHLER", api_off: "NASA API: OFFLINE",
+    audio_off: "MARS-TON: AUS", audio_on: "MARS-TON: AN",
+    btn_whitepaper: "📄 WHITEPAPER / DOKU", btn_all_info_hero: "PROJECT WHITEPAPER 📄", btn_explore: "GESCHICHTE ENTDECKEN ↓",
+    btn_timeline: "ZEITLEISTE ⏱", btn_postcard: "MARS-POSTKARTE 📸",
+    modal_close: "✕ SCHLIESSEN", modal_t: "SPACE ECHOES — PROJECT WHITEPAPER & MISSION CONTROL",
+    modal_sub: "Offizielle Technische Dokumentation, NASA-API-Architektur und Bewertungsmatrix",
+    s1_eye: "WELTRAUMFORSCHUNG / DIGITALES ERBE", s1_h1: "OPPORTUNITY<br><span>DIE GESCHICHTE</span>", s1_h2: "VON EINER 90-TAGE-MISSION ZUM 15-JAHRES-EPOS",
+    s1_p: "Eine interaktive Dokumentationsplattform mit Echtzeit-NASA-APIs über die Technikgeschichte, wissenschaftlichen Entdeckungen und das digitale Erbe des Mars-Rovers Opportunity.",
+    s1_epic: "🛰️ Lade Satellitenbild aus dem NASA-EPIC-Archiv...",
+    s2_eye: "KAPITEL 01 / START", s2_h2: "DIE REISE BEGINNT", s2_p: "Am 7. Juli 2003 startete Opportunity (MER-B) nach seinem Zwilling Spirit mit einer Delta-II-Rakete zu einer 456 Millionen km langen Reise zum Mars.",
+    v2_1t: "TRÄGERRAKETE", v2_1d: "Delta II 7925H Schwerlastrakete", v2_2t: "FLUGDAUER", v2_2d: "202 Erdentage (7. Juli 2003 – 24. Jan. 2004)",
+    s3_eye: "KAPITEL 02 / LANDUNG", s3_h2: "LANDUNG AUF DEM MARS", s3_p: "Am 24. Januar 2004 landete er mit Airbags direkt im Eagle-Krater in Meridiani Planum. Geplant waren nur 90 Marstage (Sols).",
+    v3_1t: "LANDESYSTEM", v3_1d: "Überschallfallschirm + 24-Zellen-Airbags", v3_2t: "ZIELREGION", v3_2d: "Meridiani Planum (Äquatornahe Ebene)",
+    s4_eye: "KAPITEL 03 / ENTDECKUNG", s4_h2: "SPUREN VON WASSER", s4_p: "Durch Gesteinsanalysen fand er Beweise für flüssiges Wasser in der Vergangenheit des Mars. Hämatitkügelchen ('Blueberries') schrieben die Marsgeschichte neu.",
+    v4_1t: "GEOLOGISCHER FUND", v4_1d: "Im Wasser geformte Hämatitkugeln (Blueberries)", v4_2t: "BEDEUTUNG", v4_2d: "Beweis für lebensfreundliche Gewässer auf dem Mars",
+    s5_eye: "KAPITEL 04 / DER LANGE WEG", s5_h2: "VIEL LÄNGER ALS ERWARTET", s5_p: "Marswinde reinigten die Solarmodule regelmäßig, wodurch die 90-Tage-Mission auf fast 15 Jahre und über 45 Kilometer anwuchs.",
+    v5_1t: "NATÜRLICHE REINIGUNG", v5_1d: "Staubteufel befreiten die Solarpaneele", v5_2t: "AUSDAUER", v5_2d: "Weiterfahrt trotz Rad- und Roboterarm-Verschleiß",
+    s6_eye: "KAPITEL 05 / DAS VERLORENE SIGNAL", s6_h2: "DAS LETZTE SIGNAL", s6_p: "Im Juni 2018 verdunkelte ein globaler Staubsturm den Himmel. Letzter Kontakt war am 10. Juni 2018; am 13. Februar 2019 beendete die NASA die Mission offiziell.",
+    v6_1t: "LETZTE TELEMETRIE", v6_1d: "10. Juni 2018 · Perseverance Valley", v6_2t: "MISSIONSENDE", v6_2d: "13. Februar 2019 · NASA JPL Kontrollzentrum",
+    s7_eye: "KAPITEL 06 / VERMÄCHTNIS", s7_h2: "MISSIONEN ENDEN, ENTDECKUNGEN BLEIBEN", s7_p: "Über 217.000 Rohbilder und Spektrometerdaten sind im NASA Planetary Data System (PDS) archiviert und helfen heutigen Mars-Rovern.",
+    v7_1t: "BILDARCHIV", v7_1d: "217.594+ Rohbilder der Marsoberfläche", v7_2t: "ZUKUNFTSWERT", v7_2d: "Routen- und Bodendaten für bemannte Missionen",
+    tl_eye: "KAPITEL 07 / INTERAKTIVE CHRONOLOGIE", tl_h2: "15 JAHRE ENTDECKUNGS-ZEITLEISTE",
+    tl_p: "Klicken Sie auf ein Datum von 2003 bis 2019, um Opportunitys Meilensteine auf dem Mars zu erkunden.",
+    tl_goto: "ZUM KAPITEL SPRINGEN →",
+    pc_eye: "KAPITEL 13 / INTERAKTIVES STUDIO", pc_h2: "MARS-POSTKARTE ERSTELLEN",
+    pc_p: "Öffnen Sie Ihre Webcam oder laden Sie ein Foto hoch, um eine persönliche 'Greetings from Mars'-Postkarte herunterzuladen.",
+    pc_cam_btn: "📷 KAMERA ÖFFNEN", pc_snap_btn: "📸 FOTO AUFNEHMEN", pc_up_btn: "FOTO HOCHLADEN", pc_dl_btn: "⬇ POSTKARTE HERUNTERLADEN (PNG)",
+    n1_eye: "KAPITEL 08 / ANATOMIE", n1_h2: "ANATOMIE EINES ROBOTERS", n1_p: "Konzipiert als autonomer Feldgeologe mit 360°-Panoramakamera (Pancam), Mikroskopkamera (MI), Spektrometern und dem Gesteinsschleifer (RAT).",
+    a1v: "~185 kg", a1l: "MASSE", a2v: "2,3 m", a2l: "LÄNGE", a3v: "6", a3l: "UNABHÄNGIGE RÄDER", a4v: "0,05 m/s", a4l: "HÖCHSTGESCHWINDIGKEIT",
+    n2_eye: "KAPITEL 09 / KRATER", n2_h2: "VON KRATER ZU KRATER", n2_p: "Nach der Landung im Eagle-Krater erforschte Opportunity Endurance (2004) und Victoria (2006–2008) und erreichte 2011 den 22 km breiten Endeavour-Krater.",
+    v8_1d: "Erste Wasser- und Sulfatschicht-Funde", v8_2d: "Tonminerale & Spuren von Süßwasser",
+    n3_eye: "KAPITEL 10 / ZWILLING & METEORIT", n3_h2: "EIN NAME, EIN ZWILLING, EIN METEORIT", n3_p: "Benannt durch die 9-jährige Sofi Collis. Zwilling Spirit landete im Gusev-Krater. 2005 fand Opportunity 'Heat Shield Rock', den ersten Meteoriten auf einem anderen Planeten.",
+    v9_1t: "SOFI COLLIS (9 JAHRE)", v9_1d: "\"Hier kann ich zu den Sternen blicken...\"", v9_2d: "Erster Meteorit auf einem fremden Planeten (2005)",
+    n4_eye: "KAPITEL 11 / REKORDE", n4_h2: "EIN REKORDBRECHENDER ROBOTER", n4_p: "Opportunity brach den 40-jährigen Distanzrekord von Lunokhod 2 und absolvierte 2015 eine volle Marathondistanz (42,195 km) auf dem Mars.",
+    b1v: "45,16 km", b1l: "GESAMTSTRECKE", b2v: "5 111", b2l: "MARSTAGE (SOLS)", b3v: "~57×", b3l: "GEPLANTE MISSIONSDAUER", b4v: "2015", b4l: "MARS-MARATHON ERREICHT",
+    s8_eye: "KAPITEL 12 / LIVE NASA ROVER DATEN", s8_h2: "DURCH OPPORTUNITYS AUGEN", s8_p: "Originalfotos direkt von der NASA Mars Rover Photos API. (Zum Vergrößern anklicken)",
+    c1_eye: "KAPITEL 14 / PHYSIK & SI-EINHEITEN", c1_h2: "OPPORTUNITY IN SI-EINHEITEN", c1_p: "Technik- und Planetenphysik-Werte im Internationalen Einheitensystem (SI): Masse (kg), Länge (m), Geschwindigkeit (m/s), Beschleunigung (m/s²), Zeit (s).",
+    c1v: "1 063 kg", c1l: "STARTMASSE", c2v: "185 kg", c2l: "ROVER-MASSE", c3v: "0,26 m", c3l: "RADDURCHMESSER", c4v: "0,05 m/s", c4l: "HÖCHSTGESCHWINDIGKEIT",
+    c5v: "45 160 m", c5l: "GESAMTSTRECKE (SI)", c6v: "3,71 m/s²", c6l: "MARS-SCHWERKRAFT", c7v: "88 775 s", c7l: "1 SOL (≈ 24 h 39 min)",
+    g2_eye: "KAPITEL 15 / NASA-BILDARCHIV", g2_h2: "MEHR BILDER VOM MARS", g2_p: "Hochauflösende Panoramen, Krater und Technikbilder aus der NASA Image and Video Library API.",
+    p14_eye: "KAPITEL 16 / ARCHITEKTUR, TECHNIK & WIRKUNG", p14_h2: "WIE SPACE ECHOES FUNKTIONIERT",
+    p14_p: "Unsere Systemarchitektur verwandelt komplexe Raumfahrtdaten in ein zugängliches, mehrsprachiges und interaktives Lernerlebnis.",
+    p14_c1_tag: "01 · PROBLEM & LÖSUNG", p14_c1_h: "Von Rohdaten zur klaren Geschichte",
+    p14_c1_p: "NASA-Archive enthalten Hunderttausende verstreute Rohbilder. Space Echoes bündelt sie mit SI-Physikstandards und einem Quiz für nachhaltige MINT-Bildung.",
+    p14_c2_tag: "02 · NASA API INTEGRATION", p14_c2_h: "Live-Multi-Datenquellen",
+    p14_c2_list: "<li><b>Mars Rover Photos &amp; Weather API:</b> Echte Missionsbilder und Mars-Klimadaten.</li><li><b>NASA Image &amp; Video API:</b> Dynamische Hintergründe und Panoramagalerie.</li><li><b>NASA EPIC API:</b> Zeitgestempelte Erdbeobachtungs-Archivbilder.</li>",
+    p14_c3_tag: "03 · ARCHITEKTUR & INNOVATION", p14_c3_h: "Schnelle Web-Engine ohne Abhängigkeiten",
+    p14_c3_list: "<li><b>3-sprachige i18n-Engine &amp; Audio:</b> Sofortiger TR/EN/DE-Wechsel und Mars-Ambiente.</li><li><b>Erweiterter MER-B KI-Assistent:</b> Mit Live-Marswetter-Integration.</li><li><b>HTML5-Canvas-Postkarte:</b> Webcam-gestützter Postkartengenerator.</li>",
+    p14_c4_tag: "04 · WIRKUNG, TEAM & AGILE", p14_c4_h: "Nachhaltige Bildung & Agile",
+    p14_c4_p: "In Scrum/Agile-Sprints entwickelt: Läuft ohne Serverkosten auf allen Geräten und lässt sich leicht auf Curiosity, Perseverance oder James Webb übertragen.",
+    gal_load: "Bilder laden...", gal_err: "Fotos konnten nicht geladen werden.",
+    s9_eye: "MISSION 001 / WISSENSTEST", s9_h2: "MÖCHTEST DU DICH TESTEN?", s9_p: "Teste jetzt dein Wissen mit 10 zufälligen Fragen aus unserem 32-Fragen-Pool.", btn_start: "MISSION STARTEN →",
+    q_prog: "FRAGE {idx} / {total}", score: "PUNKTE: ", correct: "✓ Richtig!", wrong: "✗ Falsch. Richtige Antwort: ", next: "NÄCHSTE FRAGE →",
+    mission_comp: "MISSION ABGESCHLOSSEN", res_perf_t: "PERFEKT!", res_perf_m: "Du bist ein wahrer Mars-Experte. Opportunity wäre stolz auf dich.",
+    res_great_t: "GROSSARTIG!", res_great_m: "Du weißt viel über Opportunity. Nur noch ein paar kleine Details.", res_good_t: "GUT!", res_good_m: "Nicht schlecht. Lies die Geschichte noch einmal für die volle Punktzahl.",
+    res_bad_t: "VERSUCHE ES ERNEUT", res_bad_m: "Die Geschichte ist es wert, noch einmal gelesen zu werden.", btn_restart: "NEUSTART", mission_rep: "MISSIONSBERICHT",
+    footer_1: "SPACE ECHOES | NASA OPEN DATA & DIGITALES ERBE", footer_2: "Daten & Bilder mit freundlicher Genehmigung von ",
+    epic_old: "ARCHIV-SATELLITENBILD", epic_fail: "🛰️ Archiv-Satellitenbild konnte nicht geladen werden."
+  }
+};
+
+var currentLang = 'tr';
+
+/* ---- 4. İNTERAKTİF ZAMAN ÇİZELGESİ VERİLERİ ---- */
+var TIMELINE_DATA = [
+  {
+    year: "7 TEM 2003", sol: "FIRLATMA · T-0", slide: "s2",
+    tr: { t: "Cape Canaveral'dan Fırlatma", d: "Opportunity (MER-B), Delta II 7925H roketiyle 456 milyon kilometrelik Mars yolculuğuna başladı.", m: "Hız: 11,2 km/s · Yakıt & Seyir Aşaması" },
+    en: { t: "Launch from Cape Canaveral", d: "Opportunity (MER-B) launched aboard a Delta II 7925H rocket on a 456-million-km journey to Mars.", m: "Velocity: 11.2 km/s · Interplanetary Cruise" },
+    de: { t: "Start von Cape Canaveral", d: "Opportunity (MER-B) startete mit einer Delta-II-Rakete auf die 456 Millionen km lange Reise zum Mars.", m: "Geschwindigkeit: 11,2 km/s" }
+  },
+  {
+    year: "24 OCA 2004", sol: "SOL 001 · İNİŞ", slide: "s3",
+    tr: { t: "Eagle Krateri'ne Tam İsabet", d: "Hava yastıklarıyla sekerek Meridiani Planum'daki 22 metrelik Eagle Krateri'nin içine kusursuz iniş yaptı.", m: "Koordinat: 1.95°G, 354.47°D · Planlanan Süre: 90 Sol" },
+    en: { t: "Hole-in-One at Eagle Crater", d: "Bouncing inside airbags, Opportunity rolled directly into the 22-meter Eagle Crater in Meridiani Planum.", m: "Coords: 1.95°S, 354.47°E · Planned: 90 Sols" },
+    de: { t: "Volltreffer im Eagle-Krater", d: "Mit Airbags landete Opportunity direkt im 22 Meter breiten Eagle-Krater in Meridiani Planum.", m: "Koordinaten: 1.95°S, 354.47°O" }
+  },
+  {
+    year: "MART 2004", sol: "SOL 038 · SU KANITI", slide: "s4",
+    tr: { t: "Sıvı Su ve 'Blueberries' Keşfi", d: "Hematit küreleri ve sülfat katmanları incelenerek Mars'ın geçmişte sıvı suyla kaplı olduğu kesinleşti.", m: "Aletler: Mössbauer, APXS & Mikroskobik Görüntüleyici" },
+    en: { t: "Liquid Water & 'Blueberries'", d: "Hematite spherules and sulfate layers proved that liquid water once flowed across ancient Mars.", m: "Instruments: Mössbauer, APXS & Microscopic Imager" },
+    de: { t: "Flüssiges Wasser & 'Blueberries'", d: "Hämatitkügelchen bewiesen, dass einst flüssiges Wasser auf dem Mars existierte.", m: "Instrumente: Mössbauer, APXS & MI" }
+  },
+  {
+    year: "OCAK 2005", sol: "SOL 346 · GÖKTAŞI", slide: "s7c",
+    tr: { t: "Heat Shield Rock Göktaşı", d: "Başka bir gezegen yüzeyinde keşfedilen ilk göktaşı olan demir-nikel yapılı 'Heat Shield Rock' bulundu.", m: "Boyut: ~31 cm · Bileşim: %93 Demir, %7 Nikel" },
+    en: { t: "Heat Shield Rock Meteorite", d: "Discovered 'Heat Shield Rock', an iron-nickel meteorite and the first ever found on another planet.", m: "Size: ~31 cm · Composition: 93% Iron, 7% Nickel" },
+    de: { t: "Meteorit Heat Shield Rock", d: "Entdeckung des ersten Meteoriten auf einem fremden Planeten.", m: "Größe: ~31 cm · Eisen-Nickel-Meteorit" }
+  },
+  {
+    year: "2006–2008", sol: "SOL 951–1630", slide: "s7b",
+    tr: { t: "Victoria Krateri Keşfi", d: "800 metre genişliğindeki Victoria Krateri'nin dik yamaçlarına inerek derin jeolojik katmanları haritaladı.", m: "Çap: 800 m · Derinlik: ~70 m" },
+    en: { t: "Exploring Victoria Crater", d: "Descended into the steep cliffs of 800-meter-wide Victoria Crater to map ancient sedimentary layers.", m: "Diameter: 800 m · Depth: ~70 m" },
+    de: { t: "Erforschung des Victoria-Kraters", d: "Abstieg in den 800 Meter breiten Victoria-Krater zur Kartierung geologischer Schichten.", m: "Durchmesser: 800 m · Tiefe: ~70 m" }
+  },
+  {
+    year: "AĞU 2011", sol: "SOL 2681 · ENDEAVOUR", slide: "s7b",
+    tr: { t: "Dev Endeavour Krateri'ne Varış", d: "3 yıllık yolculuğun ardından 22 km genişliğindeki Endeavour Krateri'ne ulaştı ve antik tatlı su killeri buldu.", m: "Krater Çapı: 22 km · Kil Mineralleri (Smektit)" },
+    en: { t: "Arrival at Endeavour Crater", d: "Reached the 22-km-wide Endeavour Crater after a 3-year trek, uncovering neutral freshwater clay minerals.", m: "Crater Diameter: 22 km · Smectite Clays" },
+    de: { t: "Ankunft am Endeavour-Krater", d: "Erreichte den 22 km breiten Endeavour-Krater und fand Tonminerale aus Süßwasser.", m: "Kraterdurchmesser: 22 km" }
+  },
+  {
+    year: "24 MAR 2015", sol: "SOL 3968 · MARATON", slide: "s7d",
+    tr: { t: "Mars Maratonu Tamamlandı", d: "42,195 km sınırını geçerek Dünya dışında tam maraton mesafesini kat eden ilk insan yapımı araç oldu.", m: "Toplam Nihai Mesafe: 45,16 km (45.160 m)" },
+    en: { t: "Mars Marathon Completed", d: "Surpassed 42.195 km, becoming the first human-made vehicle to complete a marathon on another world.", m: "Final Total Distance: 45.16 km (45,160 m)" },
+    de: { t: "Mars-Marathon absolviert", d: "Überschritt 42,195 km als erstes Fahrzeug auf einem fremden Himmelskörper.", m: "Gesamtstrecke: 45,16 km" }
+  },
+  {
+    year: "10 HAZ 2018", sol: "SOL 5111 · SON SİNYAL", slide: "s6",
+    tr: { t: "Küresel Toz Fırtınası & Veda", d: "Gezegeni saran dev toz fırtınası güneş ışığını kesti. 10 Haziran 2018'de son telemetri alındı; görev 13 Şubat 2019'da kapandı.", m: "5.111 Sol · Planlanan sürenin 57 katı" },
+    en: { t: "Global Dust Storm & Farewell", d: "A planet-encircling dust storm blocked sunlight. Final telemetry arrived June 10, 2018; mission closed Feb 13, 2019.", m: "5,111 Sols · 57× planned duration" },
+    de: { t: "Globaler Staubsturm & Abschied", d: "Ein globaler Staubsturm blockierte das Sonnenlicht. Letztes Signal am 10. Juni 2018; Missionsende am 13. Feb. 2019.", m: "5.111 Sols · 57× geplante Dauer" }
+  }
+];
+
+var activeTimelineIdx = 0;
+
+function renderTimeline() {
+  var track = document.getElementById('timeline-track');
+  var box = document.getElementById('tl-detail-box');
+  if (!track || !box) return;
+
+  track.innerHTML = '';
+  TIMELINE_DATA.forEach(function(item, idx){
+    var node = document.createElement('button');
+    node.type = 'button';
+    node.className = 'tl-node' + (idx === activeTimelineIdx ? ' active' : '');
+    node.innerHTML =
+      '<span class="tl-year">' + item.year + '</span>' +
+      '<span class="tl-sol">' + item.sol + '</span>' +
+      '<span class="tl-label">' + item[currentLang].t + '</span>';
+    node.onclick = function(){
+      activeTimelineIdx = idx;
+      renderTimeline();
+    };
+    track.appendChild(node);
+  });
+
+  var cur = TIMELINE_DATA[activeTimelineIdx];
+  var info = cur[currentLang];
+  box.innerHTML =
+    '<div>' +
+      '<h3>' + cur.year + ' — ' + info.t + '</h3>' +
+      '<p>' + info.d + '</p>' +
+      '<span class="tl-meta">🛰️ ' + info.m + '</span>' +
+    '</div>' +
+    '<a href="#' + cur.slide + '" class="btn-outline" style="white-space:nowrap;">' + I18N[currentLang].tl_goto + '</a>';
+}
+
+/* ---- 5. MARS'TAN SELAM KARTPOSTAL STÜDYOSU (WEBCAM + CANVAS) ---- */
+var pcUserImg = null;
+var pcStream = null;
+
+function startPostcardCamera() {
+  var video = document.getElementById('pc-video');
+  var canvas = document.getElementById('pc-canvas');
+  var snapBtn = document.getElementById('pc-snap-btn');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('Tarayıcınız kamera erişimini desteklemiyor. Lütfen fotoğraf yükleyin.');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+    .then(function(stream){
+      pcStream = stream;
+      video.srcObject = stream;
+      video.style.display = 'block';
+      canvas.style.display = 'none';
+      snapBtn.style.display = 'inline-flex';
+    })
+    .catch(function(){
+      alert('Kamera izni alınamadı. Cihazınızdan fotoğraf yükleyebilirsiniz.');
+    });
+}
+
+function capturePostcardPhoto() {
+  var video = document.getElementById('pc-video');
+  var canvas = document.getElementById('pc-canvas');
+  var snapBtn = document.getElementById('pc-snap-btn');
+
+  var tempCanvas = document.createElement('canvas');
+  tempCanvas.width = video.videoWidth || 640;
+  tempCanvas.height = video.videoHeight || 480;
+  tempCanvas.getContext('2d').drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+
+  var img = new Image();
+  img.onload = function(){
+    pcUserImg = img;
+    if (pcStream) {
+      pcStream.getTracks().forEach(function(t){ t.stop(); });
+      pcStream = null;
+    }
+    video.style.display = 'none';
+    snapBtn.style.display = 'none';
+    canvas.style.display = 'block';
+    renderPostcardCanvas();
+  };
+  img.src = tempCanvas.toDataURL('image/png');
+}
+
+function uploadPostcardPhoto(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var img = new Image();
+    img.onload = function(){
+      pcUserImg = img;
+      document.getElementById('pc-video').style.display = 'none';
+      document.getElementById('pc-snap-btn').style.display = 'none';
+      document.getElementById('pc-canvas').style.display = 'block';
+      renderPostcardCanvas();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderPostcardCanvas() {
+  var canvas = document.getElementById('pc-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  // Mars atmosferi ve kızıl yüzey arka planı
+  var grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, '#091326');
+  grad.addColorStop(0.55, '#4b1f14');
+  grad.addColorStop(1, '#b84a27');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Yıldızlar
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  for (var s = 0; s < 45; s++) {
+    ctx.fillRect((s * 197) % W, (s * 89) % (H * 0.45), 2, 2);
+  }
+
+  // Mars ufuk tepeleri
+  ctx.fillStyle = '#7a2e17';
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  ctx.lineTo(0, 420);
+  ctx.quadraticCurveTo(260, 350, 520, 430);
+  ctx.quadraticCurveTo(730, 480, W, 390);
+  ctx.lineTo(W, H);
+  ctx.fill();
+
+  // Dış çerçeve
+  ctx.strokeStyle = '#4fc3f7';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(18, 18, W - 36, H - 36);
+
+  // Kullanıcı fotoğraf alanı (Sol taraf)
+  ctx.save();
+  ctx.fillStyle = '#050b18';
+  ctx.fillRect(46, 54, 340, 380);
+  ctx.strokeStyle = '#ffbd73';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(46, 54, 340, 380);
+
+  if (pcUserImg) {
+    var scale = Math.max(340 / pcUserImg.width, 380 / pcUserImg.height);
+    var dw = pcUserImg.width * scale;
+    var dh = pcUserImg.height * scale;
+    ctx.beginPath();
+    ctx.rect(46, 54, 340, 380);
+    ctx.clip();
+    ctx.drawImage(pcUserImg, 46 + (340 - dw) / 2, 54 + (380 - dh) / 2, dw, dh);
+    // Hafif kızıl Mars atmosfer filtresi
+    ctx.fillStyle = 'rgba(210, 85, 40, 0.14)';
+    ctx.fillRect(46, 54, 340, 380);
+  } else {
+    ctx.fillStyle = '#9aabc2';
+    ctx.font = '600 16px "DM Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('ASTRONOT PORTRE ALANI', 216, 235);
+    ctx.font = '13px "DM Mono", monospace';
+    ctx.fillText('(Kamera aç veya fotoğraf yükle)', 216, 265);
+  }
+  ctx.restore();
+
+  // Sağ taraf tipografi ve telemetri damgası
+  var userName = (document.getElementById('pc-name').value || 'KAŞİF / EXPLORER').toUpperCase();
+  var userMsg = document.getElementById('pc-msg').value || "Meridiani Planum'dan Dünya'ya selamlar!";
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#4fc3f7';
+  ctx.font = '700 15px "DM Mono", monospace';
+  ctx.fillText('SPACE ECHOES · NASA MER-B ARCHIVE', 420, 86);
+
+  ctx.fillStyle = '#ffbd73';
+  ctx.font = '800 44px Inter, sans-serif';
+  ctx.fillText("MARS'TAN", 420, 145);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('SELAMLAR!', 420, 196);
+
+  ctx.fillStyle = '#4fc3f7';
+  ctx.font = '700 18px "DM Mono", monospace';
+  ctx.fillText('GÖNDEREN: ' + userName.slice(0, 26), 420, 252);
+
+  ctx.fillStyle = '#e5eefb';
+  ctx.font = '17px "Public Sans", sans-serif';
+  var words = userMsg.split(' ');
+  var line = '', y = 294;
+  for (var n = 0; n < words.length; n++) {
+    var testLine = line + words[n] + ' ';
+    if (ctx.measureText(testLine).width > 420 && n > 0) {
+      ctx.fillText(line, 420, y);
+      line = words[n] + ' ';
+      y += 26;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, 420, y);
+
+  // Alt telemetri şeridi
+  ctx.fillStyle = 'rgba(5, 11, 24, 0.85)';
+  ctx.fillRect(46, 464, W - 92, 86);
+  ctx.strokeStyle = '#273b56';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(46, 464, W - 92, 86);
+
+  ctx.fillStyle = '#ffbd73';
+  ctx.font = '700 13px "DM Mono", monospace';
+  ctx.fillText('KONUM: MERIDIANI PLANUM (1.95°S, 354.47°E) · EAGLE KRATERİ', 66, 496);
+  ctx.fillStyle = '#4fc3f7';
+  ctx.fillText('MARS HAVA DURUMU: ' + marsWeatherState.tempAvg + '°C | RÜZGAR: ' + marsWeatherState.wind + ' m/s | BASINÇ: ' + marsWeatherState.pressure + ' Pa', 66, 526);
+}
+
+function downloadPostcard() {
+  var canvas = document.getElementById('pc-canvas');
+  var link = document.createElement('a');
+  link.download = 'marstan-selam-opportunity.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+/* ---- 6. GELİŞMİŞ MER-B AI ASİSTAN (NLP SKORLAMA + CANLI HAVA DURUMU) ---- */
+var AI_DATA = {
+  tr: {
+    fab: "MER-B AI ASİSTAN",
+    title: "MER-B AKILLI GÖREV ASİSTANI",
+    sub: "Görev verileri + Canlı Mars Hava Durumu",
+    placeholder: "Örn: Bugün Mars'ta hava nasıl?",
+    send: "SOR",
+    welcome: "Merhaba! Ben <b>MER-B Akıllı Görev Asistanı</b>. Opportunity'nin 15 yıllık mühendislik verileri, zaman çizelgesi ve <b>bugün Mars'taki canlı hava durumu</b> hakkında sorularını yanıtlayabilirim.",
+    chips: [
+      "Bugün Mars'ta hava nasıl?",
+      "Robot kaç gün devam etti?",
+      "Ne zaman fırlatıldı ve indi?",
+      "Kaç km yol gitti?",
+      "Mars'ta ne keşfetti?",
+      "Nasıl sonlandı?",
+      "Hangi NASA API'leri var?"
+    ],
+    fallback: "Bu konuda arşivimde doğrudan bir kayıt bulamadım. Bana <b>bugün Mars'taki hava durumunu</b>, <b>görev süresini (5.111 Sol)</b>, <b>kat edilen mesafeyi</b>, <b>keşfedilen kraterleri</b> veya <b>kullanılan NASA API'lerini</b> sorabilirsin!",
+    rules: [
+      {
+        keys: ["kaç gün", "görev süresi", "ne kadar sürdü", "devam etti", "90", "sol", "kaç yıl", "ömür"],
+        ans: "Opportunity başlangıçta yalnızca <b>90 Mars günü (sol)</b> için planlanmıştı; ancak güneş panellerini temizleyen toz şeytanları sayesinde tam <b>5.111 Mars günü (~15 Dünya yılı)</b> boyunca görev yaptı."
+      },
+      {
+        keys: ["fırlat", "ne zaman", "iniş", "indi", "tarih", "meridiani", "eagle"],
+        ans: "<b>7 Temmuz 2003</b>'te Delta II roketiyle fırlatıldı ve 202 günlük seyirden sonra <b>24 Ocak 2004</b>'te <b>Meridiani Planum</b> bölgesindeki <b>Eagle Krateri</b>'ne indi."
+      },
+      {
+        keys: ["mesafe", "kaç km", "yol", "maraton", "45"],
+        ans: "Opportunity toplam <b>45,16 km (45.160 m)</b> yol kat ederek Dünya dışında en uzun mesafe giden araç rekorunu kırdı ve 2015'te Mars maratonunu tamamladı."
+      },
+      {
+        keys: ["keşif", "su", "blueberry", "yaban mersini", "hematit", "kanıt", "ne buldu"],
+        ans: "Mars'ta geçmişte <b>sıvı su</b> bulunduğuna dair kesin jeolojik kanıtlar buldu. Suda oluşan gri hematit küreleri (<b>'Blueberries'</b>) kırmızı gezegenin tarihini değiştirdi."
+      },
+      {
+        keys: ["son", "bitti", "fırtına", "sinyal", "2018", "2019", "neden sustu"],
+        ans: "Haziran 2018'deki gezegen çapındaki toz fırtınası güneş panellerini kararttı. Son sinyal <b>10 Haziran 2018</b>'de alındı; NASA görevi <b>13 Şubat 2019</b>'da resmen kapattı."
+      },
+      {
+        keys: ["ikiz", "spirit", "göktaşı", "heat shield", "isim", "sofi"],
+        ans: "İkizi <b>Spirit</b> Gusev Krateri'ne indi. Adını 9 yaşındaki <b>Sofi Collis</b> koydu. 2005'te başka bir gezegende bulunan ilk göktaşı olan <b>Heat Shield Rock</b>'u buldu."
+      },
+      {
+        keys: ["krater", "victoria", "endeavour", "endurance"],
+        ans: "Sırasıyla <b>Eagle</b> (2004), <b>Endurance</b> (2004), 800 m genişliğindeki <b>Victoria</b> (2006–2008) ve 22 km genişliğindeki <b>Endeavour</b> (2011) kraterlerini inceledi."
+      },
+      {
+        keys: ["ağırlık", "kütle", "hız", "boyut", "tekerlek", "si", "anatomi", "rat", "pancam", "yerçekimi"],
+        ans: "Robot kütlesi <b>185 kg</b>, uzunluğu <b>2,3 m</b>, 6 tekerlekli (çap <b>0,26 m</b>), en yüksek hızı <b>0,05 m/s</b> ve Mars yerçekimi <b>3,71 m/s²</b>'dir."
+      },
+      {
+        keys: ["api", "proje", "site", "nasa", "mimari", "teknoloji", "quiz", "whitepaper"],
+        ans: "Site; <b>Mars Rover Photos API</b>, <b>Mars Weather Telemetry</b>, <b>NASA Image Library</b> ve <b>EPIC API</b> ile çalışır. Üst menüdeki Whitepaper sekmesinden tüm mimariyi inceleyebilirsin."
+      }
+    ]
+  },
+  en: {
+    fab: "MER-B AI ASSISTANT",
+    title: "MER-B SMART MISSION ASSISTANT",
+    sub: "Mission data + Live Mars Weather",
+    placeholder: "E.g. How is the weather on Mars today?",
+    send: "ASK",
+    welcome: "Hello! I am the <b>MER-B Smart Mission Assistant</b>. Ask me about Opportunity's 15-year mission telemetry or <b>today's live weather on Mars</b>.",
+    chips: [
+      "How is the weather on Mars today?",
+      "How many days did it last?",
+      "Launch & landing dates?",
+      "Total distance driven?",
+      "What did it discover?",
+      "How did the mission end?"
+    ],
+    fallback: "I couldn't find an exact match in my telemetry logs. Try asking about <b>today's weather on Mars</b>, <b>mission duration (5,111 sols)</b>, <b>distance driven</b>, or <b>NASA APIs</b>!",
+    rules: [
+      {
+        keys: ["how many days", "duration", "last", "90", "sol", "years", "long"],
+        ans: "Opportunity was planned for <b>90 Martian days (sols)</b>, but Martian dust devils cleaned its solar panels, allowing it to operate for <b>5,111 sols (~15 Earth years)</b>."
+      },
+      {
+        keys: ["launch", "land", "date", "when", "meridiani", "eagle"],
+        ans: "Launched on <b>July 7, 2003</b> aboard a Delta II rocket, Opportunity landed inside <b>Eagle Crater</b> in <b>Meridiani Planum</b> on <b>January 24, 2004</b>."
+      },
+      {
+        keys: ["distance", "far", "km", "marathon", "45"],
+        ans: "Opportunity drove <b>45.16 km (45,160 m)</b>, setting the off-Earth driving record and completing a Martian marathon in 2015."
+      },
+      {
+        keys: ["discover", "water", "blueberr", "hematite", "find", "evidence"],
+        ans: "It found definitive proof of past <b>liquid water</b> on Mars, including water-formed hematite spherules nicknamed <b>'blueberries'</b>."
+      },
+      {
+        keys: ["end", "storm", "signal", "2018", "2019", "die", "stop"],
+        ans: "A planet-wide dust storm blocked sunlight in June 2018. Final contact was on <b>June 10, 2018</b>, and NASA officially ended the mission on <b>February 13, 2019</b>."
+      },
+      {
+        keys: ["twin", "spirit", "meteorite", "heat shield", "name", "sofi"],
+        ans: "Its twin <b>Spirit</b> landed in Gusev Crater. 9-year-old <b>Sofi Collis</b> named Opportunity. In 2005, it found <b>Heat Shield Rock</b>, the first meteorite discovered on another planet."
+      },
+      {
+        keys: ["crater", "victoria", "endeavour", "endurance"],
+        ans: "It explored <b>Eagle</b> (2004), <b>Endurance</b> (2004), 800m-wide <b>Victoria</b> (2006–2008), and 22-km-wide <b>Endeavour Crater</b> (2011)."
+      },
+      {
+        keys: ["mass", "weight", "speed", "wheel", "si", "anatomy", "rat", "pancam"],
+        ans: "Rover mass: <b>185 kg</b>, length: <b>2.3 m</b>, 6 wheels (<b>0.26 m</b> diameter), top speed: <b>0.05 m/s</b>, Mars gravity: <b>3.71 m/s²</b>."
+      },
+      {
+        keys: ["api", "project", "site", "nasa", "tech", "quiz", "whitepaper"],
+        ans: "Powered by <b>Mars Rover Photos API</b>, <b>Mars Weather Telemetry</b>, <b>NASA Image Library</b>, and <b>EPIC API</b>."
+      }
+    ]
+  },
+  de: {
+    fab: "MER-B KI-ASSISTENT",
+    title: "MER-B MISSIONS-ASSISTENT",
+    sub: "Missionsdaten + Live-Marswetter",
+    placeholder: "Z.B. Wie ist das Wetter heute auf dem Mars?",
+    send: "FRAGEN",
+    welcome: "Hallo! Ich bin der <b>MER-B Missions-Assistent</b>. Fragen Sie mich nach Opportunitys Missionsdaten oder dem <b>aktuellen Wetter auf dem Mars</b>.",
+    chips: [
+      "Wie ist das Wetter heute auf dem Mars?",
+      "Wie viele Tage aktiv?",
+      "Start- & Landedatum?",
+      "Wie weit ist er gefahren?",
+      "Was hat er entdeckt?"
+    ],
+    fallback: "Dazu habe ich keinen direkten Eintrag gefunden. Fragen Sie nach dem <b>heutigen Marswetter</b>, der <b>Missionsdauer (5.111 Sols)</b> oder den <b>NASA-APIs</b>!",
+    rules: [
+      {
+        keys: ["tage", "dauer", "aktiv", "90", "sol", "jahre", "lange"],
+        ans: "Geplant für <b>90 Marstage (Sols)</b>, arbeitete Opportunity dank reinigender Marswinde ganze <b>5.111 Sols (~15 Erdenjahre)</b>."
+      },
+      {
+        keys: ["start", "land", "datum", "wann", "meridiani", "eagle"],
+        ans: "Start am <b>7. Juli 2003</b>, Landung am <b>24. Januar 2004</b> im <b>Eagle-Krater</b> (Meridiani Planum)."
+      },
+      {
+        keys: ["strecke", "weit", "km", "marathon", "45"],
+        ans: "Opportunity legte <b>45,16 km (45.160 m)</b> zurück und absolvierte 2015 einen Mars-Marathon."
+      },
+      {
+        keys: ["entdeck", "wasser", "blueberr", "hämatit", "fund"],
+        ans: "Er fand Beweise für flüssiges <b>Wasser</b> auf dem Mars, darunter die Hämatitkügelchen (<b>'Blueberries'</b>)."
+      },
+      {
+        keys: ["ende", "sturm", "signal", "2018", "2019"],
+        ans: "Ein globaler Staubsturm verdunkelte im Juni 2018 den Himmel. Letzter Kontakt: <b>10. Juni 2018</b>; offizielles Ende: <b>13. Februar 2019</b>."
+      }
+    ]
+  }
+};
+
+function toggleAiChat() {
+  var panel = document.getElementById('ai-panel');
+  var fab = document.getElementById('ai-fab');
+  panel.classList.toggle('open');
+  fab.classList.toggle('expanded', panel.classList.contains('open'));
+  if (panel.classList.contains('open')) {
+    document.getElementById('ai-input').focus();
+  }
+}
+
+function initAiChat() {
+  var cfg = AI_DATA[currentLang];
+  document.getElementById('ai-fab-lbl').textContent = cfg.fab;
+  document.getElementById('ai-title').textContent = cfg.title;
+  document.getElementById('ai-sub').textContent = cfg.sub;
+  document.getElementById('ai-input').placeholder = cfg.placeholder;
+  document.getElementById('ai-send').textContent = cfg.send;
+
+  var box = document.getElementById('ai-messages');
+  box.innerHTML = '<div class="ai-msg bot">' + cfg.welcome + '</div>';
+
+  var chipsEl = document.getElementById('ai-chips');
+  chipsEl.innerHTML = '';
+  cfg.chips.forEach(function(text){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ai-chip';
+    btn.textContent = text;
+    btn.onclick = function(){ askAi(text); };
+    chipsEl.appendChild(btn);
+  });
+}
+
+function getAiResponse(question) {
+  var q = question.toLowerCase().trim();
+  var cfg = AI_DATA[currentLang];
+
+  // Canlı Mars Hava Durumu sorgusu kontrolü
+  if (q.indexOf('hava') !== -1 || q.indexOf('sıcaklık') !== -1 || q.indexOf('derece') !== -1 ||
+      q.indexOf('weather') !== -1 || q.indexOf('temp') !== -1 || q.indexOf('wetter') !== -1) {
+    if (currentLang === 'tr') {
+      return "🌡️ <b>Canlı Mars Hava Durumu (" + marsWeatherState.source + "):</b><br>" +
+             "• Ortalama Sıcaklık: <b>" + marsWeatherState.tempAvg + "°C</b> (Min: " + marsWeatherState.tempMin + "°C / Maks: " + marsWeatherState.tempMax + "°C)<br>" +
+             "• Rüzgâr Hızı: <b>" + marsWeatherState.wind + " m/s</b><br>" +
+             "• Atmosfer Basıncı: <b>" + marsWeatherState.pressure + " Pa</b> (Dünya'nın ~%0,7'si)";
+    } else if (currentLang === 'en') {
+      return "🌡️ <b>Live Mars Weather (" + marsWeatherState.source + "):</b><br>" +
+             "• Average Temp: <b>" + marsWeatherState.tempAvg + "°C</b> (Min: " + marsWeatherState.tempMin + "°C / Max: " + marsWeatherState.tempMax + "°C)<br>" +
+             "• Wind Speed: <b>" + marsWeatherState.wind + " m/s</b><br>" +
+             "• Pressure: <b>" + marsWeatherState.pressure + " Pa</b>";
+    } else {
+      return "🌡️ <b>Live-Marswetter (" + marsWeatherState.source + "):</b><br>" +
+             "• Durchschnittstemperatur: <b>" + marsWeatherState.tempAvg + "°C</b><br>" +
+             "• Windgeschwindigkeit: <b>" + marsWeatherState.wind + " m/s</b><br>" +
+             "• Druck: <b>" + marsWeatherState.pressure + " Pa</b>";
+    }
+  }
+
+  var bestMatch = null;
+  var bestScore = 0;
+
+  cfg.rules.forEach(function(rule){
+    var score = 0;
+    rule.keys.forEach(function(k){
+      if (q.indexOf(k) !== -1) score += (k.length > 4 ? 2 : 1);
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = rule.ans;
+    }
+  });
+
+  return bestMatch ? bestMatch : cfg.fallback;
+}
+
+function askAi(text) {
+  if (!text || !text.trim()) return;
+  var box = document.getElementById('ai-messages');
+  var uDiv = document.createElement('div');
+  uDiv.className = 'ai-msg user';
+  uDiv.textContent = text;
+  box.appendChild(uDiv);
+
+  var bDiv = document.createElement('div');
+  bDiv.className = 'ai-msg bot';
+  bDiv.innerHTML = getAiResponse(text);
+  box.appendChild(bDiv);
+  box.scrollTop = box.scrollHeight;
+}
+
+function handleAiSubmit(e) {
+  e.preventDefault();
+  var inp = document.getElementById('ai-input');
+  var val = inp.value;
+  inp.value = '';
+  askAi(val);
+}
+
+/* ---- DİL DEĞİŞTİRME ---- */
+function changeLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if (I18N[lang] && I18N[lang][key]) {
+      el.innerHTML = I18N[lang][key];
+    }
+  });
+  var epicCredit = document.getElementById('epic-credit');
+  if (epicCredit && epicCredit.dataset.date) {
+    epicCredit.textContent = '🛰️ NASA EPIC · ' + epicCredit.dataset.date + ' UTC · ' + I18N[lang].epic_old;
+  }
+  document.getElementById('quiz-score-lbl').textContent = I18N[lang].score;
+  initAiChat();
+  renderTimeline();
+
+  var quizBodyStr = document.getElementById('quiz-body').innerHTML;
+  if (quizBodyStr !== '') {
+    if(quizState.index >= quizState.list.length) renderResult();
+    else renderQuestion(true);
+  }
+}
+
+/* ---- MODAL SEKMELERİ & LIGHTBOX ---- */
+function toggleOverviewModal(tabId) {
+  var modal = document.getElementById('overview-modal');
+  if (tabId) {
+    modal.classList.add('open');
+    switchModalTab(tabId);
+  } else {
+    modal.classList.toggle('open');
+  }
+}
+
+function switchModalTab(tabId) {
+  document.querySelectorAll('.m-tab').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+  });
+  document.querySelectorAll('.tab-pane').forEach(function(pane){
+    pane.classList.toggle('active', pane.id === tabId);
+  });
+}
+
+function openLightbox(src, caption) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-cap').textContent = caption;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    closeLightbox();
+    document.getElementById('overview-modal').classList.remove('open');
+    document.getElementById('ai-panel').classList.remove('open');
+    document.getElementById('ai-fab').classList.remove('expanded');
+  }
+});
+
+/* ---- SLIDE + DOT NAVIGATION ---- */
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var dotsEl = document.getElementById('dots');
+slides.forEach(function(slide){
+  var a = document.createElement('a');
+  a.href = '#' + slide.id;
+  a.setAttribute('aria-label', slide.dataset.title || slide.id);
+  a.title = slide.dataset.title || '';
+  dotsEl.appendChild(a);
+});
+var dots = Array.prototype.slice.call(dotsEl.children);
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(!entry.isIntersecting) return;
+    entry.target.classList.add('in');
+    var i = slides.indexOf(entry.target);
+    if(i !== -1){
+      dots.forEach(function(d,n){ d.classList.toggle('active', n === i); });
+    }
+  });
+}, { threshold: 0.4 });
+slides.forEach(function(s){ observer.observe(s); });
+slides[0].classList.add('in');
+dots[0].classList.add('active');
+
+/* ---- NASA IMAGES: SLIDE BACKGROUNDS ---- */
+var SLIDE_IMG = {
+  s2:  { q: ['Mars Exploration Rover launch Delta II','Mars Exploration Rover spacecraft'], fb: ['PIA05575'] },
+  s3:  { q: ['Opportunity landing site Eagle Crater','Meridiani Planum Opportunity'], fb: ['PIA05199','PIA05181'] },
+  s4:  { q: ['Opportunity hematite blueberries Mars','Opportunity outcrop Mars water evidence'], fb: ['PIA05150','PIA05151'] },
+  s5:  { q: ['Opportunity rover tracks Mars','Opportunity rover Victoria Crater'], fb: ['PIA17956','PIA15024'] },
+  s6:  { q: ['Mars global dust storm 2018','Opportunity rover Perseverance Valley'], fb: ['PIA22908'] },
+  s7:  { q: ['Opportunity last panorama Mars','Opportunity Endeavour Crater panorama'], fb: ['PIA22908','PIA17271'] },
+  's-timeline': { q: ['Endeavour Crater Mars Opportunity','Meridiani Planum panorama'], fb: ['PIA17271'] },
+  s7a: { q: ['Mars Exploration Rover instruments Pancam','Mars Exploration Rover testing'], fb: ['PIA17956'] },
+  s7b: { q: ['Victoria Crater Mars Opportunity','Endeavour Crater Mars Opportunity'], fb: ['PIA17271','PIA15024'] },
+  s7c: { q: ['Heat Shield Rock Opportunity meteorite','Spirit rover Gusev Crater'], fb: ['PIA17956'] },
+  s7d: { q: ['Opportunity rover self portrait','Opportunity rover shadow portrait'], fb: ['PIA17956','PIA22908'] },
+  s8:  { q: ['Opportunity rover Mars surface','Mars Exploration Rover panorama'], fb: ['PIA15024'] },
+  's-postcard': { q: ['Mars surface horizon Opportunity','Meridiani Planum Mars'], fb: ['PIA22908'] },
+  s8a: { q: ['Mars Exploration Rover Opportunity wheel','Mars Exploration Rover engineering model'], fb: ['PIA17956'] },
+  s8b: { q: ['Mars Exploration Rover Opportunity','Mars rover panorama Meridiani'], fb: ['PIA22908'] },
+  s8c: { q: ['Jet Propulsion Laboratory Mars mission control','Mars Reconnaissance Orbiter'], fb: ['PIA17956'] },
+  s9:  { q: ['Opportunity rover Mars sunset','Mars Exploration Rover sunset'], fb: ['PIA22908'] }
+};
+var NASA_ASSETS = 'https://images-assets.nasa.gov/image/';
+
+function assetUrls(id){
+  return [NASA_ASSETS + id + '/' + id + '~medium.jpg', NASA_ASSETS + id + '/' + id + '~large.jpg'];
+}
+function tryUrls(urls, done){
+  var i = 0;
+  (function next(){
+    if(i >= urls.length){ done(null); return; }
+    var u = urls[i++];
+    var im = new Image();
+    im.onload = function(){ done(u); };
+    im.onerror = next;
+    im.src = u;
+  })();
+}
+function loadSlideBackgrounds(){
+  slides.forEach(function(slide){
+    if(slide.classList.contains('cover')) return;
+    var cfg = SLIDE_IMG[slide.id];
+    if(!cfg) return;
+    var fbUrls = [];
+    cfg.fb.forEach(function(id){ fbUrls = fbUrls.concat(assetUrls(id)); });
+
+    Promise.all(cfg.q.map(function(q){
+      return fetch(NASA_IMAGES_BASE + '/search?q=' + encodeURIComponent(q) + '&media_type=image&page_size=4')
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .catch(function(){ return null; });
+    })).then(function(results){
+      var urls = [], seen = {};
+      results.forEach(function(data){
+        var items = data && data.collection && data.collection.items;
+        if(!items) return;
+        items.slice(0,3).forEach(function(it){
+          var thumb = it.links && it.links[0] && it.links[0].href;
+          if(!thumb || seen[thumb]) return;
+          seen[thumb] = true;
+          urls.push(thumb.replace('~thumb.jpg','~medium.jpg'));
+          urls.push(thumb);
+        });
+      });
+      tryUrls(urls.concat(fbUrls), function(ok){
+        if(ok) slide.style.backgroundImage = "url('" + ok + "')";
+      });
+    });
+  });
+}
+
+/* ---- EPIC SATELLITE IMAGE ---- */
+var EPIC_OLD_DATE = '2015-10-31';
+function loadEpicImage(){
+  var credit = document.getElementById('epic-credit');
+  var status = document.getElementById('nasa-status');
+  fetch('https://api.nasa.gov/EPIC/api/natural/date/' + EPIC_OLD_DATE + '?api_key=' + NASA_API_KEY)
+    .then(function(res){ if(!res.ok) throw new Error('EPIC'); return res.json(); })
+    .then(function(data){
+      if(!data.length) throw new Error('no data');
+      var pick = data[Math.floor(data.length / 2)];
+      var p = pick.date.split(' ')[0].split('-');
+      var imgUrl = 'https://epic.gsfc.nasa.gov/archive/natural/' + p[0] + '/' + p[1] + '/' + p[2] + '/png/' + pick.image + '.png';
+      var img = new Image();
+      img.onload = function(){
+        document.querySelector('.cover').style.backgroundImage =
+          "linear-gradient(90deg, rgba(5,11,24,.96), rgba(5,11,24,.45)), url('" + imgUrl + "')";
+        if(credit){
+          credit.dataset.date = pick.date;
+          credit.textContent = '🛰️ NASA EPIC · ' + pick.date + ' UTC · ' + I18N[currentLang].epic_old;
+        }
+        if(status){
+          status.dataset.i18n = 'api_act';
+          status.textContent = I18N[currentLang].api_act;
+        }
+      };
+      img.onerror = function(){
+        if(credit) credit.textContent = I18N[currentLang].epic_fail;
+        if(status) status.textContent = I18N[currentLang].api_err;
+      };
+      img.src = imgUrl;
+    })
+    .catch(function(){
+      if(credit) credit.textContent = I18N[currentLang].epic_fail;
+      if(status) status.textContent = I18N[currentLang].api_off;
+    });
+}
+
+/* ---- OPPORTUNITY GALLERY ---- */
+function loadOpportunityGallery(){
+  var gallery = document.getElementById('rover-gallery');
+  if(!gallery) return;
+  var DATES = ['2004-01-25','2004-02-01','2004-03-01','2004-06-15','2005-01-01','2005-07-10','2006-09-26','2008-08-28','2011-08-10','2014-07-27'];
+  var MAX = 12;
+  var photos = [];
+  var idx = 0;
+
+  function nextDate(){
+    if(idx >= DATES.length || photos.length >= MAX){ renderGallery(); return; }
+    var date = DATES[idx++];
+    fetch('https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=' + date + '&api_key=' + NASA_API_KEY)
+      .then(function(res){ return res.ok ? res.json() : null; })
+      .then(function(data){
+        if(data && data.photos && data.photos.length){
+          photos = photos.concat(data.photos.slice(0,2));
+        }
+        nextDate();
+      })
+      .catch(function(){ nextDate(); });
+  }
+
+  function renderGallery(){
+    if(!photos.length){
+      gallery.innerHTML = '<p class="error" data-i18n="gal_err">' + I18N[currentLang].gal_err + '</p>';
+      return;
+    }
+    gallery.innerHTML = '';
+    photos.slice(0,MAX).forEach(function(p){
+      var fig = document.createElement('figure');
+      var img = document.createElement('img');
+      var captionText = 'SOL ' + p.sol + ' · ' + p.camera.full_name + ' (' + p.earth_date + ')';
+      img.src = p.img_src;
+      img.alt = captionText;
+      img.loading = 'lazy';
+      img.onerror = function(){ if(fig.parentNode) fig.parentNode.removeChild(fig); };
+      var cap = document.createElement('figcaption');
+      cap.textContent = 'SOL ' + p.sol + ' · ' + p.camera.name + ' · ' + p.earth_date;
+      fig.onclick = function(){ openLightbox(p.img_src, captionText); };
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      gallery.appendChild(fig);
+    });
+  }
+  nextDate();
+}
+
+/* ---- NASA IMAGE LIBRARY GALLERY ---- */
+function loadNasaGallery(){
+  var gallery = document.getElementById('nasa-gallery');
+  if(!gallery) return;
+  var queries = ['Opportunity rover Mars','Endeavour crater Mars rover','Meridiani Planum','Victoria crater Mars'];
+  var seen = {};
+  var items = [];
+  Promise.all(queries.map(function(q){
+    return fetch(NASA_IMAGES_BASE + '/search?q=' + encodeURIComponent(q) + '&media_type=image&page_size=8')
+      .then(function(res){ return res.ok ? res.json() : null; })
+      .catch(function(){ return null; });
+  })).then(function(results){
+    results.forEach(function(data){
+      var list = data && data.collection && data.collection.items;
+      if(!list) return;
+      list.slice(0,4).forEach(function(it){
+        var link = it.links && it.links[0] && it.links[0].href;
+        var meta = it.data && it.data[0];
+        if(!link || !meta || seen[link]) return;
+        seen[link] = true;
+        items.push({ thumb: link, title: meta.title || '', date: (meta.date_created || '').slice(0,10) });
+      });
+    });
+    if(!items.length){
+      gallery.innerHTML = '<p class="error" data-i18n="gal_err">' + I18N[currentLang].gal_err + '</p>';
+      return;
+    }
+    gallery.innerHTML = '';
+    items.slice(0,12).forEach(function(it){
+      var fig = document.createElement('figure');
+      var img = document.createElement('img');
+      var mediumSrc = it.thumb.replace('~thumb.jpg','~medium.jpg');
+      img.src = it.thumb.replace('~thumb.jpg','~small.jpg');
+      img.onerror = function(){ img.onerror = function(){ if(fig.parentNode) fig.parentNode.removeChild(fig); }; img.src = it.thumb; };
+      img.alt = it.title;
+      img.loading = 'lazy';
+      var cap = document.createElement('figcaption');
+      var t = it.title.length > 65 ? it.title.slice(0,62) + '...' : it.title;
+      cap.textContent = t + (it.date ? ' · ' + it.date : '');
+      fig.onclick = function(){ openLightbox(mediumSrc, it.title + (it.date ? ' (' + it.date + ')' : '')); };
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      gallery.appendChild(fig);
+    });
+  });
+}
+
+/* ---- QUIZ (32 SORULUK HAVUZ) ---- */
+var QUIZ = [
+  { tr: { q: "Opportunity rover Mars'a hangi tarihte indi?", options: ["24 Ocak 2004","7 Temmuz 2003","13 Şubat 2019","10 Haziran 2018"] },
+    en: { q: "On what date did the Opportunity rover land on Mars?", options: ["January 24, 2004","July 7, 2003","February 13, 2019","June 10, 2018"] },
+    de: { q: "An welchem Datum landete der Opportunity-Rover auf dem Mars?", options: ["24. Januar 2004","7. Juli 2003","13. Februar 2019","10. Juni 2018"] },
+    correct:0 },
+  { tr: { q: "Opportunity'nin ikizi olan diğer Mars robotunun adı neydi?", options: ["Curiosity","Spirit","Perseverance","Sojourner"] },
+    en: { q: "What was the name of Opportunity's twin Mars rover?", options: ["Curiosity","Spirit","Perseverance","Sojourner"] },
+    de: { q: "Wie hieß der Zwillings-Mars-Rover von Opportunity?", options: ["Curiosity","Spirit","Perseverance","Sojourner"] },
+    correct:1 },
+  { tr: { q: "Opportunity'nin planlanan görev süresi ne kadardı?", options: ["1 Dünya yılı","90 Mars günü","5 Mars yılı","10 Dünya yılı"] },
+    en: { q: "What was Opportunity's planned mission duration?", options: ["1 Earth year","90 Martian days","5 Martian years","10 Earth years"] },
+    de: { q: "Was war die geplante Missionsdauer von Opportunity?", options: ["1 Erdenjahr","90 Marstage","5 Marsjahre","10 Erdenjahre"] },
+    correct:1 },
+  { tr: { q: "Opportunity yaklaşık ne kadar süre aktif kaldı?", options: ["90 gün","1 yıl","~15 yıl","~3 yıl"] },
+    en: { q: "Approximately how long did Opportunity remain active?", options: ["90 days","1 year","~15 years","~3 years"] },
+    de: { q: "Wie lange blieb Opportunity ungefähr aktiv?", options: ["90 Tage","1 Jahr","~15 Jahre","~3 Jahre"] },
+    correct:2 },
+  { tr: { q: "Opportunity'nin enerji kaynağı neydi?", options: ["Nükleer reaktör","Güneş panelleri","Rüzgâr türbini","Benzin motoru"] },
+    en: { q: "What was Opportunity's power source?", options: ["Nuclear reactor","Solar panels","Wind turbine","Gasoline engine"] },
+    de: { q: "Was war die Energiequelle von Opportunity?", options: ["Kernreaktor","Sonnenkollektoren","Windkraftanlage","Benzinmotor"] },
+    correct:1 },
+  { tr: { q: "Opportunity Mars'ta hangi bölgeye indi?", options: ["Gale Krateri","Jezero Krateri","Meridiani Planum","Valles Marineris"] },
+    en: { q: "Which region on Mars did Opportunity land in?", options: ["Gale Crater","Jezero Crater","Meridiani Planum","Valles Marineris"] },
+    de: { q: "In welcher Region auf dem Mars landete Opportunity?", options: ["Gale-Krater","Jezero-Krater","Meridiani Planum","Valles Marineris"] },
+    correct:2 },
+  { tr: { q: "Opportunity Mars'ta ne tür bilimsel kanıtlar buldu?", options: ["Canlı organizmalar","Geçmişte sıvı su izleri","Şehir kalıntıları","Orman fosilleri"] },
+    en: { q: "What kind of scientific evidence did Opportunity find on Mars?", options: ["Living organisms","Traces of past liquid water","City ruins","Forest fossils"] },
+    de: { q: "Welche Art von wissenschaftlichen Beweisen fand Opportunity auf dem Mars?", options: ["Lebende Organismen","Spuren von flüssigem Wasser in der Vergangenheit","Stadtruinen","Waldfossilien"] },
+    correct:1 },
+  { tr: { q: "Opportunity görevi sırasında yaklaşık ne kadar yol kat etti?", options: ["~4,5 km","~45 km","~450 km","~4 500 km"] },
+    en: { q: "Approximately how far did Opportunity travel during its mission?", options: ["~4.5 km","~45 km","~450 km","~4 500 km"] },
+    de: { q: "Wie weit ist Opportunity während seiner Mission ungefähr gereist?", options: ["~4,5 km","~45 km","~450 km","~4 500 km"] },
+    correct:1 },
+  { tr: { q: "Opportunity ile son iletişim hangi tarihte kesildi?", options: ["13 Şubat 2019","10 Haziran 2018","24 Ocak 2004","7 Temmuz 2003"] },
+    en: { q: "On what date was the last communication with Opportunity lost?", options: ["February 13, 2019","June 10, 2018","January 24, 2004","July 7, 2003"] },
+    de: { q: "An welchem Datum brach die letzte Kommunikation mit Opportunity ab?", options: ["13. Februar 2019","10. Juni 2018","24. Januar 2004","7. Juli 2003"] },
+    correct:1 },
+  { tr: { q: "Opportunity görevi NASA tarafından hangi tarihte resmen sona erdirildi?", options: ["10 Haziran 2018","13 Şubat 2019","24 Ocak 2004","7 Temmuz 2003"] },
+    en: { q: "On what date was the Opportunity mission officially ended by NASA?", options: ["June 10, 2018","February 13, 2019","January 24, 2004","July 7, 2003"] },
+    de: { q: "An welchem Datum wurde die Opportunity-Mission von der NASA offiziell beendet?", options: ["10. Juni 2018","13. Februar 2019","24. Januar 2004","7. Juli 2003"] },
+    correct:1 },
+  { tr: { q: "Opportunity'nin adını belirleyen yazı yarışmasını kim kazandı?", options: ["9 yaşındaki öğrenci Sofi Collis","Bir NASA mühendisi","Bir astronot","Bir üniversite profesörü"] },
+    en: { q: "Who won the essay contest that named Opportunity?", options: ["9-year-old student Sofi Collis","A NASA engineer","An astronaut","A university professor"] },
+    de: { q: "Wer gewann den Aufsatzwettbewerb, der Opportunity seinen Namen gab?", options: ["Die 9-jährige Schülerin Sofi Collis","Ein NASA-Ingenieur","Ein Astronaut","Ein Universitätsprofessor"] },
+    correct:0 },
+  { tr: { q: "İkiz robot Spirit hangi kratere indi?", options: ["Gusev Krateri","Gale Krateri","Jezero Krateri","Endeavour Krateri"] },
+    en: { q: "Which crater did the twin rover Spirit land in?", options: ["Gusev Crater","Gale Crater","Jezero Crater","Endeavour Crater"] },
+    de: { q: "In welchem Krater landete der Zwillings-Rover Spirit?", options: ["Gusev-Krater","Gale-Krater","Jezero-Krater","Endeavour-Krater"] },
+    correct:0 },
+  { tr: { q: "Opportunity'nin Ocak 2005'te bulduğu göktaşının adı nedir?", options: ["Heat Shield Rock","Blueberry Rock","Eagle Stone","Mars Meteor One"] },
+    en: { q: "What is the name of the meteorite Opportunity found in January 2005?", options: ["Heat Shield Rock","Blueberry Rock","Eagle Stone","Mars Meteor One"] },
+    de: { q: "Wie heißt der Meteorit, den Opportunity im Januar 2005 fand?", options: ["Heat Shield Rock","Blueberry Rock","Eagle Stone","Mars Meteor One"] },
+    correct:0 },
+  { tr: { q: "Opportunity 2011'de hangi kratere ulaştı?", options: ["Endeavour Krateri","Victoria Krateri","Endurance Krateri","Eagle Krateri"] },
+    en: { q: "Which crater did Opportunity reach in 2011?", options: ["Endeavour Crater","Victoria Crater","Endurance Crater","Eagle Crater"] },
+    de: { q: "Welchen Krater erreichte Opportunity 2011?", options: ["Endeavour-Krater","Victoria-Krater","Endurance-Krater","Eagle-Krater"] },
+    correct:0 },
+  { tr: { q: "Opportunity hangi yıl maraton mesafesini (42,195 km) geçti?", options: ["2005","2010","2015","2018"] },
+    en: { q: "In which year did Opportunity pass marathon distance (42.195 km)?", options: ["2005","2010","2015","2018"] },
+    de: { q: "In welchem Jahr überschritt Opportunity die Marathondistanz (42,195 km)?", options: ["2005","2010","2015","2018"] },
+    correct:2 },
+  { tr: { q: "Opportunity'nin kaç tekerleği vardı?", options: ["4","6","8","10"] },
+    en: { q: "How many wheels did Opportunity have?", options: ["4","6","8","10"] },
+    de: { q: "Wie viele Räder hatte Opportunity?", options: ["4","6","8","10"] },
+    correct:1 },
+  { tr: { q: "Opportunity yaklaşık kaç Mars günü (sol) çalıştı?", options: ["90","1 000","5 111","10 000"] },
+    en: { q: "Approximately how many Martian days (sols) did Opportunity operate?", options: ["90","1 000","5 111","10 000"] },
+    de: { q: "Wie viele Marstage (Sols) war Opportunity ungefähr in Betrieb?", options: ["90","1 000","5 111","10 000"] },
+    correct:2 },
+  { tr: { q: "Kayaların yüzeyini aşındırıp içini incelemeye yarayan alet hangisidir?", options: ["Kaya Aşındırma Aleti (RAT)","Panoramik kamera (Pancam)","Güneş paneli","Anten"] },
+    en: { q: "Which instrument grinds into rock surfaces so they can be studied inside?", options: ["Rock Abrasion Tool (RAT)","Panoramic camera (Pancam)","Solar panel","Antenna"] },
+    de: { q: "Welches Instrument schleift Felsoberflächen an, um ihr Inneres zu untersuchen?", options: ["Gesteinsschleifer (RAT)","Panoramakamera (Pancam)","Solarpaneel","Antenne"] },
+    correct:0 },
+  { tr: { q: "Opportunity ile iletişimin kesilmesine ne sebep oldu?", options: ["Mars'ı saran büyük toz fırtınası","Bir meteor çarpması","Yakıtın bitmesi","Bir yazılım hatası"] },
+    en: { q: "What led to the loss of contact with Opportunity?", options: ["A huge dust storm covering Mars","A meteor impact","Running out of fuel","A software bug"] },
+    de: { q: "Was führte zum Kontaktabbruch mit Opportunity?", options: ["Ein riesiger Staubsturm auf dem Mars","Ein Meteoriteneinschlag","Leerer Treibstofftank","Ein Softwarefehler"] },
+    correct:0 },
+  { tr: { q: "Opportunity Dünya'dan hangi yıl fırlatıldı?", options: ["2001","2003","2004","2018"] },
+    en: { q: "In which year was Opportunity launched from Earth?", options: ["2001","2003","2004","2018"] },
+    de: { q: "In welchem Jahr wurde Opportunity von der Erde gestartet?", options: ["2001","2003","2004","2018"] },
+    correct:1 },
+  { tr: { q: "Mars'a yolculuk yaklaşık ne kadar sürdü?", options: ["7 gün","~7 ay","7 yıl","70 gün"] },
+    en: { q: "Approximately how long did the trip to Mars take?", options: ["7 days","~7 months","7 years","70 days"] },
+    de: { q: "Wie lange dauerte die Reise zum Mars ungefähr?", options: ["7 Tage","~7 Monate","7 Jahre","70 Tage"] },
+    correct:1 },
+  { tr: { q: "Opportunity Victoria Krateri'ni hangi yıllar arasında keşfetti?", options: ["2004–2005","2006–2008","2011–2013","2016–2018"] },
+    en: { q: "Between which years did Opportunity explore Victoria Crater?", options: ["2004–2005","2006–2008","2011–2013","2016–2018"] },
+    de: { q: "In welchen Jahren erkundete Opportunity den Victoria-Krater?", options: ["2004–2005","2006–2008","2011–2013","2016–2018"] },
+    correct:1 },
+  { tr: { q: "'Blueberry' lakaplı küçük küreler hangi mineral bakımından zengindi?", options: ["Hematit","Altın","Buz","Elmas"] },
+    en: { q: "Which mineral were the small 'blueberry' spheres rich in?", options: ["Hematite","Gold","Ice","Diamond"] },
+    de: { q: "An welchem Mineral waren die kleinen 'Blaubeeren' reich?", options: ["Hämatit","Gold","Eis","Diamant"] },
+    correct:0 },
+  { tr: { q: "Endeavour Krateri yaklaşık kaç km genişliğindedir?", options: ["~2 km","~22 km","~220 km","~2 200 km"] },
+    en: { q: "Approximately how wide is Endeavour Crater?", options: ["~2 km","~22 km","~220 km","~2 200 km"] },
+    de: { q: "Wie breit ist der Endeavour-Krater ungefähr?", options: ["~2 km","~22 km","~220 km","~2 200 km"] },
+    correct:1 },
+  { tr: { q: "Opportunity'nin en yüksek sürüş hızı yaklaşık ne kadardı?", options: ["~0,05 m/s","~5 m/s","~14 m/s","~500 m/s"] },
+    en: { q: "What was Opportunity's top driving speed, approximately?", options: ["~0.05 m/s","~5 m/s","~14 m/s","~500 m/s"] },
+    de: { q: "Wie hoch war Opportunitys Höchstgeschwindigkeit ungefähr?", options: ["~0,05 m/s","~5 m/s","~14 m/s","~500 m/s"] },
+    correct:0 },
+  { tr: { q: "Opportunity, Dünya dışında hangi rekoru kırdı?", options: ["En uzun mesafe kat eden araç","En hızlı araç","En ağır araç","En yüksek tırmanış"] },
+    en: { q: "Which record did Opportunity set off Earth?", options: ["Vehicle that drove the farthest","Fastest vehicle","Heaviest vehicle","Highest climb"] },
+    de: { q: "Welchen Rekord stellte Opportunity außerhalb der Erde auf?", options: ["Fahrzeug mit der weitesten Fahrstrecke","Schnellstes Fahrzeug","Schwerstes Fahrzeug","Höchster Aufstieg"] },
+    correct:0 },
+  { tr: { q: "Opportunity Eagle Krateri'ne nasıl bir iniş yaptı?", options: ["Adeta 'tam isabet' (hole-in-one) bir iniş","Kraterin dışına sert iniş","Paraşütsüz serbest düşüş","Yanal kayma"] },
+    en: { q: "How did Opportunity's landing in Eagle Crater go?", options: ["An almost 'hole-in-one' landing","A hard landing outside the crater","A free fall without parachute","A sideways slide"] },
+    de: { q: "Wie verlief Opportunitys Landung im Eagle-Krater?", options: ["Fast ein 'Hole-in-one'","Eine harte Landung außerhalb des Kraters","Ein freier Fall ohne Fallschirm","Ein seitliches Abrutschen"] },
+    correct:0 },
+  { tr: { q: "SI birim sisteminde Opportunity'nin hızı hangi birimle ifade edilir?", options: ["m/s","mil/sa","knot","fit/dk"] },
+    en: { q: "In the SI system, which unit expresses Opportunity's speed?", options: ["m/s","mph","knot","ft/min"] },
+    de: { q: "Mit welcher Einheit wird Opportunitys Geschwindigkeit im SI-System angegeben?", options: ["m/s","mph","Knoten","ft/min"] },
+    correct:0 },
+  { tr: { q: "Opportunity'nin tekerlek çapı yaklaşık kaç metredir?", options: ["0,26 m","2,6 m","0,026 m","26 m"] },
+    en: { q: "Approximately how many metres across were Opportunity's wheels?", options: ["0.26 m","2.6 m","0.026 m","26 m"] },
+    de: { q: "Wie viele Meter Durchmesser hatten Opportunitys Räder ungefähr?", options: ["0,26 m","2,6 m","0,026 m","26 m"] },
+    correct:0 },
+  { tr: { q: "Mars yüzeyindeki yerçekimi ivmesi yaklaşık kaç m/s²'dir?", options: ["3,71 m/s²","9,81 m/s²","1,62 m/s²","24,8 m/s²"] },
+    en: { q: "What is the gravitational acceleration on the surface of Mars, approximately?", options: ["3.71 m/s²","9.81 m/s²","1.62 m/s²","24.8 m/s²"] },
+    de: { q: "Wie groß ist die Schwerebeschleunigung auf der Marsoberfläche ungefähr?", options: ["3,71 m/s²","9,81 m/s²","1,62 m/s²","24,8 m/s²"] },
+    correct:0 },
+  { tr: { q: "Opportunity'nin robot kütlesi yaklaşık kaç kg'dır?", options: ["~185 kg","~18,5 kg","~1 850 kg","~18 500 kg"] },
+    en: { q: "Approximately how many kg did the Opportunity rover weigh in mass?", options: ["~185 kg","~18.5 kg","~1 850 kg","~18 500 kg"] },
+    de: { q: "Wie viele kg Masse hatte der Opportunity-Rover ungefähr?", options: ["~185 kg","~18,5 kg","~1 850 kg","~18 500 kg"] },
+    correct:0 },
+  { tr: { q: "Opportunity'nin toplam yolu SI birimiyle (metre) yaklaşık kaçtır?", options: ["45 160 m","4 516 m","451 600 m","451 m"] },
+    en: { q: "What was Opportunity's total distance in SI units (metres), approximately?", options: ["45 160 m","4 516 m","451 600 m","451 m"] },
+    de: { q: "Wie groß was Opportunitys Gesamtstrecke in SI-Einheiten (Meter) ungefähr?", options: ["45 160 m","4 516 m","451 600 m","451 m"] },
+    correct:0 }
+];
+
+var QUIZ_LEN = 10;
+var quizState = { index: 0, score: 0, answered: false, selectedAnswer: -1, list: [] };
+var quizBody = document.getElementById('quiz-body');
+var quizProgress = document.getElementById('quiz-progress');
+var quizScore = document.getElementById('quiz-score');
+
+function shuffle(arr){
+  for(var i = arr.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+function newQuiz(){
+  var ids = shuffle(QUIZ.map(function(_, i){ return i; })).slice(0, QUIZ_LEN);
+  quizState = {
+    index: 0, score: 0, answered: false, selectedAnswer: -1,
+    list: ids.map(function(i){ return { item: QUIZ[i], order: shuffle([0,1,2,3]) }; })
+  };
+  quizScore.textContent = '0';
+  renderQuestion(false);
+}
+
+function renderQuestion(isRestoring){
+  var cur = quizState.list[quizState.index];
+  var q = cur.item[currentLang];
+
+  quizProgress.textContent = I18N[currentLang].q_prog.replace('{idx}', quizState.index + 1).replace('{total}', quizState.list.length);
+  quizScore.textContent = quizState.score;
+
+  var html = '';
+  html += '<h2 class="quiz-question">' + (quizState.index+1) + '. ' + q.q + '</h2>';
+  html += '<div class="quiz-options" id="quiz-options"></div>';
+  html += '<div class="quiz-feedback" id="quiz-feedback"></div>';
+  html += '<button class="quiz-next" id="quiz-next" type="button">' + I18N[currentLang].next + '</button>';
+  quizBody.innerHTML = html;
+
+  var optWrap = document.getElementById('quiz-options');
+  cur.order.forEach(function(orig, pos){
+    var btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.type = 'button';
+    btn.textContent = q.options[orig];
+    btn.addEventListener('click', function(){ answer(pos, false); });
+    optWrap.appendChild(btn);
+  });
+
+  document.getElementById('quiz-next').addEventListener('click', nextQuestion);
+
+  if (!isRestoring) {
+    quizState.answered = false;
+    quizState.selectedAnswer = -1;
+  } else if (quizState.answered) {
+    answer(quizState.selectedAnswer, true);
+  }
+}
+
+function answer(selected, isRestoring){
+  if(quizState.answered && !isRestoring) return;
+  var cur = quizState.list[quizState.index];
+  var q = cur.item[currentLang];
+  var correctPos = cur.order.indexOf(cur.item.correct);
+  var opts = document.querySelectorAll('.quiz-option');
+  var fb = document.getElementById('quiz-feedback');
+
+  if (!isRestoring) {
+    quizState.answered = true;
+    quizState.selectedAnswer = selected;
+    if(selected === correctPos) {
+      quizState.score++;
+      quizScore.textContent = quizState.score;
+    }
+  }
+
+  Array.prototype.forEach.call(opts, function(btn, i){
+    btn.disabled = true;
+    if(i === correctPos) btn.classList.add('correct');
+    if(i === selected && i !== correctPos) btn.classList.add('wrong');
+  });
+
+  if(selected === correctPos){
+    fb.textContent = I18N[currentLang].correct;
+    fb.className = 'quiz-feedback ok';
+  } else {
+    fb.textContent = I18N[currentLang].wrong + q.options[cur.item.correct];
+    fb.className = 'quiz-feedback no';
+  }
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQuestion(){
+  quizState.index++;
+  if(quizState.index >= quizState.list.length) renderResult();
+  else renderQuestion(false);
+}
+
+function renderResult(){
+  quizProgress.textContent = I18N[currentLang].mission_comp;
+  var s = quizState.score, n = quizState.list.length;
+  var title, msg;
+  if(s === n){ title = I18N[currentLang].res_perf_t; msg = I18N[currentLang].res_perf_m; }
+  else if(s >= 8){ title = I18N[currentLang].res_great_t; msg = I18N[currentLang].res_great_m; }
+  else if(s >= 5){ title = I18N[currentLang].res_good_t; msg = I18N[currentLang].res_good_m; }
+  else { title = I18N[currentLang].res_bad_t; msg = I18N[currentLang].res_bad_m; }
+
+  var html = '<div class="quiz-result">';
+  html += '<p class="eyebrow" data-i18n="mission_rep">' + I18N[currentLang].mission_rep + '</p>';
+  html += '<h2>' + title + '</h2>';
+  html += '<div class="final-score">' + s + ' / ' + n + '</div>';
+  html += '<p>' + msg + '</p>';
+  html += '<button class="quiz-restart" id="quiz-restart" type="button" data-i18n="btn_restart">' + I18N[currentLang].btn_restart + '</button>';
+  html += '</div>';
+  quizBody.innerHTML = html;
+  document.getElementById('quiz-restart').addEventListener('click', newQuiz);
+}
+
+document.getElementById('start-quiz-btn').addEventListener('click', function(){
+  document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  changeLang('tr');
+  loadEpicImage();
+  loadMarsWeather();
+  loadOpportunityGallery();
+  loadSlideBackgrounds();
+  loadNasaGallery();
+  renderPostcardCanvas();
+  newQuiz();
+});
+</script>
+</body>
+</html>
